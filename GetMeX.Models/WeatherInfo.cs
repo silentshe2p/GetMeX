@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GetMeX.Models
+﻿namespace GetMeX.Models
 {
-	class Weather
+	public class WeatherInfo
 	{
 		public string Location { get; set; }
 

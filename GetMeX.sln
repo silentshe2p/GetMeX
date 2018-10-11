@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApplicationViews", "Applica
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{AD80FE8C-AB74-40F2-9387-8AD1C3F69E63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetMeX.ViewModel", "GetMeX.ViewModel\GetMeX.ViewModel.csproj", "{1E9F50B0-02D1-4434-9F69-1B7B6612933E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetMeX.ViewModels", "GetMeX.ViewModel\GetMeX.ViewModels.csproj", "{1E9F50B0-02D1-4434-9F69-1B7B6612933E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repositories", "Repositories", "{5811BE66-AB0B-45CA-9BDF-D4B37234C5D7}"
 EndProject

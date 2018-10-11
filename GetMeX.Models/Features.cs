@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GetMeX.Models
+﻿namespace GetMeX.Models
 {
-	public class Features
+	public enum Features
 	{
-		public string Name { get; set; }
+		J1fm,
+		Weather,
+		Dictionary
+		//GoogleSearch,
+		//AmazonSearch
 	}
 }

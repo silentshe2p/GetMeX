@@ -63,9 +63,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GetMeX.ViewModel\GetMeX.ViewModel.csproj">
+    <ProjectReference Include="..\GetMeX.Models\GetMeX.Models.csproj">
+      <Project>{8bed7141-0749-4e6a-90a5-129fec2f1f86}</Project>
+      <Name>GetMeX.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GetMeX.ViewModel\GetMeX.ViewModels.csproj">
       <Project>{1E9F50B0-02D1-4434-9F69-1B7B6612933E}</Project>
-      <Name>GetMeX.ViewModel</Name>
+      <Name>GetMeX.ViewModels</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

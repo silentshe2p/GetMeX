@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GetMeX.ViewModel
+namespace GetMeX.ViewModels.VMs
 {
-    public class GetMeXViewModel
-    {
-    }
+	public class DictionaryViewModel
+	{
+	}
 }

@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GetMeX.Models
+﻿namespace GetMeX.Models
 {
-	class SongInfo
+	public class SongInfo
 	{
 		public string Artist { get; set; }
 
 		public string Title { get; set; }
+
+		public string CoverUrl { get; set; }
+
+		public string StoreUrl { get; set; }
 	}
 }

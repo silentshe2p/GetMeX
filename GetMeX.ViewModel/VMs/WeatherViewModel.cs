@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GetMeX.ViewModel.Services
+namespace GetMeX.ViewModels.VMs
 {
-	class GetWeather
+	public class WeatherViewModel
 	{
 	}
 }

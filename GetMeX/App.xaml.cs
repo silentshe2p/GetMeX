@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using GetMeX.ViewModels.VMs;
+using System;
 using System.Windows;
 
 namespace GetMeX
@@ -16,13 +12,25 @@ namespace GetMeX
 		protected override void OnStartup(StartupEventArgs e)
 		{
 			base.OnStartup(e);
+			AppDomain.CurrentDomain.UnhandledException += AppDomainExceptionHandler;
 			ComposeObject();
-			Application.Current.MainWindow.Show();
+			Current.MainWindow.Show();
 		}
 
 		private static void ComposeObject()
 		{
-			Application.Current.MainWindow = new GetMeXWindow();
+			var viewModel = new EmptyViewModel();
+			Current.MainWindow = new GetMeXWindow(viewModel);
+		}
+
+		private void AppDomainExceptionHandler(object sender, UnhandledExceptionEventArgs args)
+		{
+			Exception e = (Exception)args.ExceptionObject;
+			string errMsg = string.Format("Error occurred: {0}{1}Application will be closed", e.Message, Environment.NewLine);
+			if (MessageBox.Show(errMsg, "Error", MessageBoxButton.OK, MessageBoxImage.Error) == MessageBoxResult.OK)
+			{
+				Current.Shutdown();
+			}
 		}
 	}
 }

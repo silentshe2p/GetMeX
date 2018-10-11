@@ -56,5 +56,16 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GetMeX.Models\GetMeX.Models.csproj">
+      <Project>{8bed7141-0749-4e6a-90a5-129fec2f1f86}</Project>
+      <Name>GetMeX.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GetMeX.ViewModel\GetMeX.ViewModels.csproj">
+      <Project>{1e9f50b0-02d1-4434-9f69-1b7b6612933e}</Project>
+      <Name>GetMeX.ViewModels</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

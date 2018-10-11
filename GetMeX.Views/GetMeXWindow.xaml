@@ -3,15 +3,137 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		xmlns:local="clr-namespace:GetMeX"
+		xmlns:vms="clr-namespace:GetMeX.ViewModels.VMs;assembly=GetMeX.ViewModels"
+		xmlns:models="clr-namespace:GetMeX.Models;assembly=GetMeX.Models"
+		xmlns:sys="clr-namespace:System;assembly=mscorlib"
 		mc:Ignorable="d"
-		Title="GetMeXWindow" Height="450" Width="800">
-	<Window.Resources>
+		Title="GetMeXWindow" Height="450" Width="800"
+		Background="{DynamicResource MaterialDesignPaper}"
+		TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 
+	<Window.Resources>
+		<ObjectDataProvider x:Key="featuresEnum" MethodName="GetValues"
+						ObjectType="{x:Type sys:Enum}">
+			<ObjectDataProvider.MethodParameters>
+				<x:Type TypeName="models:Features"/>
+			</ObjectDataProvider.MethodParameters>
+		</ObjectDataProvider>
+
+		<ObjectDataProvider x:Key="channelArr" MethodName="GetNames"
+						ObjectType="{x:Type sys:Enum}">
+			<ObjectDataProvider.MethodParameters>
+				<x:Type TypeName="models:J1Channels"/>
+			</ObjectDataProvider.MethodParameters>
+		</ObjectDataProvider>
+
+		<!--Empty view model when no feature is selected-->
+		<DataTemplate DataType="{x:Type vms:EmptyViewModel}">
+			<TextBlock Text="Choose a feature above to get started!" TextAlignment="Center"
+					   FontFamily="Century" FontSize="18"
+					   VerticalAlignment="Center"
+					   Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+		</DataTemplate>
+
+		<!--Feature view models-->
+		<DataTemplate DataType="{x:Type vms:J1fmViewModel}">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition/><RowDefinition/><RowDefinition/>
+					<RowDefinition/><RowDefinition/><RowDefinition/>
+					<RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
+					<ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
+					<ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
+					<ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+
+				<!--Additional Params-->
+				<TextBlock Text="Append To File?"
+						   Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+						   Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+				<TextBlock Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4">
+					<Button Name="J1BtnBrowseFile" Content="Browse"
+							Grid.Column="1" Click="J1BtnBrowseFile_Click"
+							Style="{DynamicResource MaterialDesignFlatButton}"/>
+					<TextBlock Name="FileNameDisplay" Text="{Binding FileToAppend}"
+							   Grid.Column="2" Grid.ColumnSpan="3"/>
+				</TextBlock>
+
+				<TextBlock Text="Channel"
+						   Grid.Row="4" Grid.Column="1"
+						   Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+				<ComboBox ItemsSource="{Binding Source={StaticResource channelArr}}" SelectedItem="{Binding Channel, Mode=TwoWay}"
+						  Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2"
+						  FontSize="12" FontStyle="Italic" FontFamily="Cambria"/>
+
+				<!--Song Info Display-->
+				<Image Source="{Binding Info.CoverUrl}"
+					   Grid.Row="0" Grid.RowSpan="3" Grid.Column="7" Grid.ColumnSpan="3"/>
+				
+				<TextBlock Text="Title"
+						   Grid.Row="4" Grid.Column="7"/>
+				<TextBlock Text="{Binding Info.Title}"
+						   Grid.Row="4" Grid.Column="8" Grid.ColumnSpan="4"
+						   Style="{DynamicResource MaterialDesignButtonTextBlock}"/>
+
+				<TextBlock Text="Artist"
+						   Grid.Row="6" Grid.Column="7"/>
+				<TextBlock Text="{Binding Info.Artist}"
+						   Grid.Row="6" Grid.Column="8" Grid.ColumnSpan="4"
+						   Style="{DynamicResource MaterialDesignButtonTextBlock}"/>
+				
+				<TextBlock Text="CDJapan"
+						   Grid.Row="8" Grid.Column="7"/>
+				<TextBlock Grid.Row="8" Grid.Column="8" Grid.ColumnSpan="4">
+					<Hyperlink>
+						<TextBlock Text="{Binding Info.StoreUrl}" MouseDown="Hyperlink_RequestNavigate"/>
+					</Hyperlink>
+				</TextBlock>
+
+			</Grid>
+		</DataTemplate>
+		
+		<DataTemplate DataType="{x:Type vms:WeatherViewModel}">
+			<TextBlock>WeatherViewModel goes here</TextBlock>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vms:DictionaryViewModel}">
+			<TextBlock>DictionaryViewModel goes here</TextBlock>
+		</DataTemplate>
 	</Window.Resources>
-	
-	<StackPanel>
-		<TextBlock Style="{StaticResource MainTitleStyle}" Name="MainTitle">GetMeX</TextBlock>
-		<ComboBox Style="{StaticResource MainSelectionStyle}" Name="MainSelection"></ComboBox>
-	</StackPanel>
+
+	<!--Common view-->
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="2*"/>
+			<RowDefinition Height="6*"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
+			<ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+
+		<TextBlock	Name="MainTitle" Text="GetMeX"
+					FontFamily="Cooper" FontWeight="Bold" FontSize="24"
+					Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"
+					Style="{DynamicResource MaterialDesignHeadlineTextBlock}"
+					TextAlignment="Center"/>
+
+		<ComboBox	Name="MainSelection"
+					FontFamily="Consolas" FontWeight="SemiBold" FontSize="16"
+					Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+					Style="{DynamicResource MaterialDesignComboBox}"
+					ItemsSource="{Binding Source={StaticResource featuresEnum}}">
+		</ComboBox>
+		
+		<Button Command="{Binding DoWorkCommand}" Content="Get!"
+				Grid.Row="2" Grid.Column="4"
+				Style="{DynamicResource MaterialDesignRaisedAccentButton}"/>
+		<!--Feature-specific view-->
+		<ContentPresenter Name="MainContent" Content="{Binding}" 
+						  Grid.Row="3" Grid.ColumnSpan="6"/>
+	</Grid>
 </Window>

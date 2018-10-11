@@ -7,8 +7,8 @@
     <ProjectGuid>{1E9F50B0-02D1-4434-9F69-1B7B6612933E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GetMeX.ViewModel</RootNamespace>
-    <AssemblyName>GetMeX.ViewModel</AssemblyName>
+    <RootNamespace>GetMeX.ViewModels</RootNamespace>
+    <AssemblyName>GetMeX.ViewModels</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,10 +42,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GetMeXViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\GetSong.cs" />
-    <Compile Include="Services\GetWeather.cs" />
+    <Compile Include="Services\GetSongService.cs" />
+    <Compile Include="Services\GetWeatherService.cs" />
+    <Compile Include="Commands\AsyncCommand.cs" />
+    <Compile Include="Commands\AsyncCommandBase.cs" />
+    <Compile Include="Commands\IAsyncCommand.cs" />
+    <Compile Include="Commands\NotifyTaskCompletion.cs" />
+    <Compile Include="VMs\DictionaryViewModel.cs" />
+    <Compile Include="VMs\EmptyViewModel.cs" />
+    <Compile Include="VMs\IViewModel.cs" />
+    <Compile Include="VMs\J1fmViewModel.cs" />
+    <Compile Include="VMs\WeatherViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GetMeX.Models\GetMeX.Models.csproj">
+      <Project>{8bed7141-0749-4e6a-90a5-129fec2f1f86}</Project>
+      <Name>GetMeX.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

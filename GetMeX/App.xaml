@@ -1,19 +1,17 @@
 ﻿<Application x:Class="GetMeX.App"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:local="clr-namespace:GetMeX">
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	<Application.Resources>
-		<Style TargetType="TextBlock" x:Key="MainTitleStyle">
-			<Setter Property="HorizontalAlignment" Value="Center" />
-			<Setter Property="FontFamily" Value="Bauhaus 93" />
-			<Setter Property="FontSize" Value="20" />
-			<Setter Property="Margin" Value="0,60,0,0" />
-		</Style>
-		<Style TargetType="ComboBox" x:Key="MainSelectionStyle">
-			<Setter Property="HorizontalAlignment" Value="Center" />
-			<Setter Property="FontFamily" Value="DejaVu Sans Mono" />
-			<Setter Property="FontSize" Value="12" />
-			<Setter Property="Margin" Value="0,60,0,0" />
-		</Style>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml"/>
+				<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Blue.xaml"/>
+				<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Orange.xaml"/>
+				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBlock.xaml"/>
+				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBox.xaml"/>
+				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.ComboBox.xaml"/>
+				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml"/>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
 	</Application.Resources>
 </Application>
