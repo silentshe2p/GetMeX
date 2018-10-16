@@ -167,8 +167,7 @@
 				<ComboBox ItemsSource="{Binding Source={StaticResource tempUnitArr}}" 
 						  SelectedItem="{Binding TempUnit, Mode=TwoWay}"
 						  Grid.Column="6" Grid.ColumnSpan="2"
-						  FontSize="12" FontStyle="Italic" FontFamily="Cambria"
-						  DropDownOpened="UnitBox_DropDownOpened" DropDownClosed="UnitBox_DropDownClosed"/>
+						  FontSize="12" FontStyle="Italic" FontFamily="Cambria"/>
 
 				<TextBlock Text="Api key?" Grid.Column="8"
 						   Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
