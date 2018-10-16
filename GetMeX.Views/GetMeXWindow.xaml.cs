@@ -40,6 +40,7 @@ namespace GetMeX
 
 		private void Hyperlink_RequestNavigate(object sender, RoutedEventArgs e)
 		{
+			// The actual link is inside a TextBlock which is inside HyperLink
 			var s = sender as TextBlock;
 			Process.Start(new ProcessStartInfo(s?.Text));
 			e.Handled = true;
@@ -63,10 +64,6 @@ namespace GetMeX
 						break;
 					case "Weather":
 						DataContext = _weatherVM;
-						_lastFeature = currentFeature;
-						break;
-					case "Dictionary":
-						DataContext = _dictVM;
 						_lastFeature = currentFeature;
 						break;
 					default:

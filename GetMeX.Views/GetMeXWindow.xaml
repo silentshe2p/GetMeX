@@ -4,14 +4,21 @@
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:vms="clr-namespace:GetMeX.ViewModels.VMs;assembly=GetMeX.ViewModels"
+		xmlns:ult="clr-namespace:GetMeX.ViewModels.Utilities;assembly=GetMeX.ViewModels"
 		xmlns:models="clr-namespace:GetMeX.Models;assembly=GetMeX.Models"
 		xmlns:sys="clr-namespace:System;assembly=mscorlib"
+		xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
 		mc:Ignorable="d"
-		Title="GetMeXWindow" Height="450" Width="800"
+		Title="GetMeX" Height="450" Width="800"
 		Background="{DynamicResource MaterialDesignPaper}"
 		TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 
 	<Window.Resources>
+		<!--Converters-->
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+		<ult:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+
+		<!--Data Providers-->
 		<ObjectDataProvider x:Key="featuresEnum" MethodName="GetValues"
 						ObjectType="{x:Type sys:Enum}">
 			<ObjectDataProvider.MethodParameters>
@@ -26,7 +33,48 @@
 			</ObjectDataProvider.MethodParameters>
 		</ObjectDataProvider>
 
-		<!--Empty view model when no feature is selected-->
+		<ObjectDataProvider x:Key="tempUnitArr" MethodName="GetNames"
+						ObjectType="{x:Type sys:Enum}">
+			<ObjectDataProvider.MethodParameters>
+				<x:Type TypeName="models:TempUnit"/>
+			</ObjectDataProvider.MethodParameters>
+		</ObjectDataProvider>
+
+		<Style x:Key="placeHolder" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type TextBox}">
+						<Grid>
+							<TextBox Text="{Binding Path=Text,
+												RelativeSource={RelativeSource TemplatedParent}, 
+												Mode=TwoWay,
+												UpdateSourceTrigger=PropertyChanged}"
+									 Style="{DynamicResource MaterialDesignTextBox}" TextAlignment="Center"
+									 FontWeight="SemiBold" FontSize="14" FontFamily="Cambria"
+									 x:Name="textSource" Background="Transparent" Panel.ZIndex="2" />
+							<TextBox Text="{TemplateBinding Tag}" Background="{TemplateBinding Background}" Panel.ZIndex="1"
+									 FontWeight="Thin" FontSize="14" FontStyle="Italic" FontFamily="Cambria">
+								<TextBox.Style>
+									<Style TargetType="{x:Type TextBox}">
+										<Setter Property="Foreground" Value="Transparent"/>
+										<Style.Triggers>
+											<DataTrigger Binding="{Binding Path=Text, Source={x:Reference textSource}}" Value="">
+												<Setter Property="Foreground" Value="LightGray"/>
+											</DataTrigger>
+										</Style.Triggers>
+									</Style>
+								</TextBox.Style>
+							</TextBox>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+
+		<!-- ***View Models Templates Begins*** -->
+
+		<!--Empty View Model (no feature is selected)-->
 		<DataTemplate DataType="{x:Type vms:EmptyViewModel}">
 			<TextBlock Text="Choose a feature above to get started!" TextAlignment="Center"
 					   FontFamily="Century" FontSize="18"
@@ -34,7 +82,7 @@
 					   Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
 		</DataTemplate>
 
-		<!--Feature view models-->
+		<!--J1fm View Model Template-->
 		<DataTemplate DataType="{x:Type vms:J1fmViewModel}">
 			<Grid>
 				<Grid.RowDefinitions>
@@ -91,25 +139,94 @@
 						<TextBlock Text="{Binding Info.StoreUrl}" MouseDown="Hyperlink_RequestNavigate"/>
 					</Hyperlink>
 				</TextBlock>
+			</Grid>
+		</DataTemplate>
+
+		<!--Weather View Model Template-->
+		<DataTemplate DataType="{x:Type vms:WeatherViewModel}">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition/><RowDefinition Height="auto"/>
+					<RowDefinition/><RowDefinition/><RowDefinition/>
+					<RowDefinition/><RowDefinition/><RowDefinition/>
+					<RowDefinition/><RowDefinition/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
+					<ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
+					<ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
+					<ColumnDefinition/><ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
+				</Grid.ColumnDefinitions>
+
+				<!--Additional Params-->
+				<TextBlock Text="Where are you?" Grid.Column="1" Grid.ColumnSpan="2"
+						   Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+				<TextBox Text="{Binding InputLocation, Mode=TwoWay}"
+						 Grid.Column="3" Grid.ColumnSpan="3"
+						 Style="{StaticResource placeHolder}" Tag="City or Country Name"/>
+				<ComboBox ItemsSource="{Binding Source={StaticResource tempUnitArr}}" 
+						  SelectedItem="{Binding TempUnit, Mode=TwoWay}"
+						  Grid.Column="6" Grid.ColumnSpan="2"
+						  FontSize="12" FontStyle="Italic" FontFamily="Cambria"/>
+
+				<TextBlock Text="Api key?" Grid.Column="8"
+						   Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+				<TextBox Text="{Binding ApiKey, Mode=TwoWay}"
+						 Grid.Column="9" Grid.ColumnSpan="3"
+						 Style="{StaticResource placeHolder}" Tag="OpenWeatherMap (optional)"/>
+
+				<!--Weather Display-->
+				<TextBlock Text="Location"
+						   Grid.Row="3" Grid.Column="1"/>
+				<TextBlock Text="{Binding Info.Location}"
+						   Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2"
+						   Style="{DynamicResource MaterialDesignButtonTextBlock}"/>
+
+				<TextBlock Text="Temperature"
+						   Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2"/>
+				<TextBlock Text="{Binding Info.Temp}"
+						   Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="2"
+						   Style="{DynamicResource MaterialDesignButtonTextBlock}"/>
+				<Image Source="{Binding Info.Status}" Grid.Row="5" Grid.Column="4" 
+					   HorizontalAlignment="Stretch"/>
+
+				<TextBlock Text="Temperature Range"
+						   Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2"/>
+				<TextBlock Text="{Binding Info.TempMin}"
+						   Grid.Row="7" Grid.Column="3"
+						   Style="{DynamicResource MaterialDesignButtonTextBlock}"/>
+				<TextBlock Text="{Binding Info.TempMax}"
+						   Grid.Row="7" Grid.Column="5"
+						   Style="{DynamicResource MaterialDesignButtonTextBlock}"/>
+
+				<TextBlock Text="Wind"
+						   Grid.Row="9" Grid.Column="1"/>
+				<TextBlock Text="{Binding Info.Wind}" Grid.Row="9" Grid.Column="3"
+						   Style="{DynamicResource MaterialDesignButtonTextBlock}"/>
+				<TextBlock Text="Humidity"
+						   Grid.Row="9" Grid.Column="5"/>
+				<TextBlock Text="{Binding Info.Humidity}" Grid.Row="9" Grid.Column="6"
+						   Style="{DynamicResource MaterialDesignButtonTextBlock}"/>
 
 			</Grid>
 		</DataTemplate>
-		
-		<DataTemplate DataType="{x:Type vms:WeatherViewModel}">
-			<TextBlock>WeatherViewModel goes here</TextBlock>
-		</DataTemplate>
+
+		<!--Dictionary View Model Template-->
 		<DataTemplate DataType="{x:Type vms:DictionaryViewModel}">
 			<TextBlock>DictionaryViewModel goes here</TextBlock>
 		</DataTemplate>
+
+		<!-- ***View Models Templates Ends*** -->
 	</Window.Resources>
 
-	<!--Common view-->
+	<!--Common View-->
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="auto"/>
 			<RowDefinition Height="2*"/>
 			<RowDefinition Height="6*"/>
+			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
@@ -132,8 +249,24 @@
 		<Button Command="{Binding DoWorkCommand}" Content="Get!"
 				Grid.Row="2" Grid.Column="4"
 				Style="{DynamicResource MaterialDesignRaisedAccentButton}"/>
-		<!--Feature-specific view-->
-		<ContentPresenter Name="MainContent" Content="{Binding}" 
+		
+		<!--Feature-specific View-->
+		<ContentPresenter Name="MainContent" Content="{Binding}"
 						  Grid.Row="3" Grid.ColumnSpan="6"/>
+		
+		<!--Status-->
+		<Grid Visibility="{Binding DoWorkCommand.Execution, 
+						   Converter={StaticResource NullToVisibilityConverter}}"
+			Grid.Row="4" Grid.ColumnSpan="4" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+			<!--Busy indicator-->
+			<wpf:Card Visibility="{Binding DoWorkCommand.Execution.IsNotCompleted, 
+								   Converter={StaticResource BooleanToVisibilityConverter}}" 
+					Content="Working..." FontSize="14" Background="Azure"/>
+			<!--Error details-->
+			<wpf:Card Visibility="{Binding DoWorkCommand.Execution.IsFaulted, 
+								   Converter={StaticResource BooleanToVisibilityConverter}}" 
+					  Content="{Binding DoWorkCommand.Execution.ErrorMessage}" 
+					  FontSize="14" Background="Orange"/>
+		</Grid>
 	</Grid>
 </Window>
