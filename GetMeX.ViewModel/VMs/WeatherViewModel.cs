@@ -4,6 +4,8 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace GetMeX.ViewModels.VMs
 {
@@ -42,82 +44,6 @@ namespace GetMeX.ViewModels.VMs
 			}
 		}
 
-		private string _location;
-		public string Location
-		{
-			get { return _location; }
-			set
-			{
-				_location = value;
-				OnPropertyChanged();
-			}
-		}
-
-		private string _status;
-		public string Status
-		{
-			get { return _status; }
-			set
-			{
-				_status = value;
-				OnPropertyChanged();
-			}
-		}
-
-		private float _temp;
-		public float Temp
-		{
-			get { return _temp; }
-			set
-			{
-				_temp = value;
-				OnPropertyChanged();
-			}
-		}
-
-		private float _tempMax;
-		public float TempMax
-		{
-			get { return _tempMax; }
-			set
-			{
-				_tempMax = value;
-				OnPropertyChanged();
-			}
-		}
-
-		private float _tempMin;
-		public float TempMin
-		{
-			get { return _tempMin; }
-			set
-			{
-				_tempMin = value;
-				OnPropertyChanged();
-			}
-		}
-
-		private int _humidity;
-		public int Humidity
-		{
-			get { return _humidity; }
-			set
-			{
-				_humidity = value;
-				OnPropertyChanged();
-			}
-		}
-
-		private float _wind;
-		public float Wind
-		{
-			get { return _wind; }
-			set {
-				_wind = value;
-				OnPropertyChanged();
-			}
-		}
-
 		private WeatherInfo _info;
 		public WeatherInfo Info
 		{
@@ -129,9 +55,10 @@ namespace GetMeX.ViewModels.VMs
 			}
 		}
 
-		public WeatherViewModel()
+		public WeatherViewModel(string inputLocation = null, string unit = null)
 		{
-			TempUnit = "Celsius";
+			InputLocation = inputLocation;
+			TempUnit = (unit == null) ? "Celsius" : unit;
 			DoWorkCommand = AsyncCommand.Create(DoWork);
 		}
 

@@ -167,7 +167,8 @@
 				<ComboBox ItemsSource="{Binding Source={StaticResource tempUnitArr}}" 
 						  SelectedItem="{Binding TempUnit, Mode=TwoWay}"
 						  Grid.Column="6" Grid.ColumnSpan="2"
-						  FontSize="12" FontStyle="Italic" FontFamily="Cambria"/>
+						  FontSize="12" FontStyle="Italic" FontFamily="Cambria"
+						  DropDownOpened="UnitBox_DropDownOpened" DropDownClosed="UnitBox_DropDownClosed"/>
 
 				<TextBlock Text="Api key?" Grid.Column="8"
 						   Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
@@ -179,7 +180,7 @@
 				<TextBlock Text="Location"
 						   Grid.Row="3" Grid.Column="1"/>
 				<TextBlock Text="{Binding Info.Location}"
-						   Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="2"
+						   Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="5"
 						   Style="{DynamicResource MaterialDesignButtonTextBlock}"/>
 
 				<TextBlock Text="Temperature"
@@ -193,10 +194,10 @@
 				<TextBlock Text="Temperature Range"
 						   Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2"/>
 				<TextBlock Text="{Binding Info.TempMin}"
-						   Grid.Row="7" Grid.Column="3"
+						   Grid.Row="7" Grid.Column="3" Grid.ColumnSpan="2"
 						   Style="{DynamicResource MaterialDesignButtonTextBlock}"/>
 				<TextBlock Text="{Binding Info.TempMax}"
-						   Grid.Row="7" Grid.Column="5"
+						   Grid.Row="7" Grid.Column="5" Grid.ColumnSpan="2"
 						   Style="{DynamicResource MaterialDesignButtonTextBlock}"/>
 
 				<TextBlock Text="Wind"
@@ -245,8 +246,9 @@
 					Style="{DynamicResource MaterialDesignComboBox}"
 					ItemsSource="{Binding Source={StaticResource featuresEnum}}">
 		</ComboBox>
-		
-		<Button Command="{Binding DoWorkCommand}" Content="Get!"
+
+		<Button Name="GetButton" Content="Get!"
+				Command="{Binding DoWorkCommand}" 
 				Grid.Row="2" Grid.Column="4"
 				Style="{DynamicResource MaterialDesignRaisedAccentButton}"/>
 		
@@ -263,10 +265,26 @@
 								   Converter={StaticResource BooleanToVisibilityConverter}}" 
 					Content="Working..." FontSize="14" Background="Azure"/>
 			<!--Error details-->
-			<wpf:Card Visibility="{Binding DoWorkCommand.Execution.IsFaulted, 
+			<wpf:Card Visibility="{Binding DoWorkCommand.Execution.IsFaulted, NotifyOnTargetUpdated=True,
 								   Converter={StaticResource BooleanToVisibilityConverter}}" 
 					  Content="{Binding DoWorkCommand.Execution.ErrorMessage}" 
-					  FontSize="14" Background="Orange"/>
+					  FontSize="14" Background="Orange">
+				<!--Error fades out after 5s-->
+				<wpf:Card.Triggers>
+					<EventTrigger RoutedEvent="Binding.TargetUpdated">
+						<BeginStoryboard>
+							<Storyboard>
+								<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity">
+									<EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+									<EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1"/>
+									<EasingDoubleKeyFrame KeyTime="0:0:5" Value="1"/>
+									<EasingDoubleKeyFrame KeyTime="0:0:5.1" Value="0"/>
+								</DoubleAnimationUsingKeyFrames>
+							</Storyboard>
+						</BeginStoryboard>
+					</EventTrigger>
+				</wpf:Card.Triggers>
+			</wpf:Card>
 		</Grid>
 	</Grid>
 </Window>
