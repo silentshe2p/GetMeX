@@ -1,7 +1,7 @@
 # GetMeX
 #### WPF with [Material Design](https://github.com/MaterialDesignInXAML)
 
-## Implemented
+## Features
 
 1. J1 Current Song
 - Get current playing song on [J1 FM Radio](https://en.j1fm.tokyo) with corresponding [CDJapan](http://www.cdjapan.co.jp) link
@@ -17,13 +17,11 @@
 <img src="https://i.imgur.com/7XASJj5.jpg" alt="j1" width="450" height="250">
 
 
-## To be implemented
+## To do
 
 0. Prettier UI
 
 1. Dictionary
-- Given a word, get it definition as well as pronounciation (in a playable audio file)
-- Save looked up words in local db
 
 2. Google Searches
 - Given a keyword, display first few results that would show up on google 

@@ -1,9 +1,7 @@
-﻿using GetMeX.ViewModels.VMs;
-using Microsoft.Win32;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using GetMeX.ViewModels.VMs;
 
 namespace GetMeX
 {
@@ -23,27 +21,6 @@ namespace GetMeX
 			MainSelection.DropDownClosed += OnDropDownOpened;
 			MainSelection.SelectionChanged += OnSelectionChanged;
 			DataContext = viewModel;
-		}
-
-		private void J1BtnBrowseFile_Click(object sender, RoutedEventArgs e)
-		{
-			OpenFileDialog dialog = new OpenFileDialog
-			{
-				Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
-				InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
-			};
-			if (dialog.ShowDialog() == true)
-			{
-				_j1fmVM.FileToAppend = dialog.FileName;
-			}
-		}
-
-		private void Hyperlink_RequestNavigate(object sender, RoutedEventArgs e)
-		{
-			// The actual link is inside a TextBlock which is inside HyperLink
-			var s = sender as TextBlock;
-			Process.Start(new ProcessStartInfo(s?.Text));
-			e.Handled = true;
 		}
 
 		private void OnDropDownOpened(object sender, EventArgs e)

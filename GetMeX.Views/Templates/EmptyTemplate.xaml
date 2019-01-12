@@ -1,0 +1,12 @@
+﻿<ResourceDictionary 
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vms="clr-namespace:GetMeX.ViewModels.VMs;assembly=GetMeX.ViewModels" >
+	<!--Empty view model (no feature is selected)-->
+	<DataTemplate DataType="{x:Type vms:EmptyViewModel}">
+		<TextBlock Text="{Binding Usage}" TextAlignment="Center"
+					   FontFamily="Century" FontSize="18"
+					   VerticalAlignment="Center"
+					   Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+	</DataTemplate>
+</ResourceDictionary>

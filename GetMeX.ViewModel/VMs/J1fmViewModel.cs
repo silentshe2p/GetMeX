@@ -1,11 +1,11 @@
-﻿using GetMeX.Models;
-using GetMeX.ViewModels.Services;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using GetMeX.Models;
+using GetMeX.ViewModels.Services;
 
 namespace GetMeX.ViewModels.VMs
 {
@@ -59,7 +59,7 @@ namespace GetMeX.ViewModels.VMs
 			if (FileToAppend != null && File.Exists(FileToAppend))
 			{
 				string appendContent = Info.Artist + " - " + Info.Title;
-				File.AppendAllText(FileToAppend, appendContent + Environment.NewLine, new UnicodeEncoding(false, true));
+				File.AppendAllText(FileToAppend, appendContent + Environment.NewLine, new UnicodeEncoding());
 			}
 		}
 

@@ -1,0 +1,89 @@
+﻿<ResourceDictionary 
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:sys="clr-namespace:System;assembly=mscorlib"
+	xmlns:models="clr-namespace:GetMeX.Models;assembly=GetMeX.Models"
+	xmlns:vms="clr-namespace:GetMeX.ViewModels.VMs;assembly=GetMeX.ViewModels"
+	x:Class="GetMeX.Templates.J1Template" >
+
+	<ObjectDataProvider x:Key="channelArr" MethodName="GetNames"
+						ObjectType="{x:Type sys:Enum}">
+		<ObjectDataProvider.MethodParameters>
+			<x:Type TypeName="models:J1Channels"/>
+		</ObjectDataProvider.MethodParameters>
+	</ObjectDataProvider>
+
+	<DataTemplate DataType="{x:Type vms:J1fmViewModel}">
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+				<ColumnDefinition/>
+			</Grid.ColumnDefinitions>
+
+			<!--Additional Params-->
+			<TextBlock Text="Append To File?"
+						   Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+						   Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+			<TextBlock Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="4">
+					<Button Name="J1BtnBrowseFile" Content="Browse"
+							Grid.Column="1" Click="J1BtnBrowseFile_Click"
+							Style="{DynamicResource MaterialDesignFlatButton}"/>
+					<TextBlock Name="FileNameDisplay" Text="{Binding FileToAppend}"
+							   Grid.Column="2" Grid.ColumnSpan="3"/>
+				</TextBlock>
+
+			<TextBlock Text="Channel"
+						   Grid.Row="4" Grid.Column="1"
+						   Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+			<ComboBox ItemsSource="{Binding Source={StaticResource channelArr}}" SelectedItem="{Binding Channel, Mode=TwoWay}"
+						  Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2"
+						  FontSize="12" FontStyle="Italic" FontFamily="Cambria"/>
+
+			<!--Song info display-->
+			<Image Source="{Binding Info.CoverUrl}"
+					   Grid.Row="0" Grid.RowSpan="3" Grid.Column="7" Grid.ColumnSpan="3"/>
+
+			<TextBlock Text="Title"
+						   Grid.Row="4" Grid.Column="7"/>
+			<TextBlock Text="{Binding Info.Title}"
+						   Grid.Row="4" Grid.Column="8" Grid.ColumnSpan="4"
+						   Style="{DynamicResource MaterialDesignButtonTextBlock}"/>
+
+			<TextBlock Text="Artist"
+						   Grid.Row="6" Grid.Column="7"/>
+			<TextBlock Text="{Binding Info.Artist}"
+						   Grid.Row="6" Grid.Column="8" Grid.ColumnSpan="4"
+						   Style="{DynamicResource MaterialDesignButtonTextBlock}"/>
+
+			<TextBlock Text="CDJapan"
+						   Grid.Row="8" Grid.Column="7"/>
+			<TextBlock Grid.Row="8" Grid.Column="8" Grid.ColumnSpan="4">
+					<Hyperlink>
+						<TextBlock Text="{Binding Info.StoreUrl}" MouseDown="Hyperlink_RequestNavigate"/>
+					</Hyperlink>
+				</TextBlock>
+		</Grid>
+	</DataTemplate>
+</ResourceDictionary>
