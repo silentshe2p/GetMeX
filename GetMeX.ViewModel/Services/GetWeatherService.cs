@@ -1,12 +1,12 @@
-﻿using GetMeX.Models;
-using GetMeX.ViewModels.Exceptions;
-using System;
+﻿using System;
 using System.Device.Location;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
+using GetMeX.Models;
+using GetMeX.ViewModels.Exceptions;
 
 namespace GetMeX.ViewModels.Services
 {

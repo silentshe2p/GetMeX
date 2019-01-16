@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using GetMeX.Models;
 using GetMeX.ViewModels.Services;
 
-namespace GetMeX.ViewModel.Services.Tests
+namespace GetMeX.ViewModels.Services.Tests
 {
 	[TestClass()]
 	public class GetSongTests

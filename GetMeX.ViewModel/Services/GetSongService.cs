@@ -1,7 +1,7 @@
-﻿using GetMeX.Models;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using GetMeX.Models;
 
 namespace GetMeX.ViewModels.Services
 {

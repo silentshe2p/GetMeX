@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GetMeX.ViewModel.Services.Tests
+namespace GetMeX.ViewModels.Services.Tests
 {
 	[TestClass()]
 	public class GetWeatherServiceTests

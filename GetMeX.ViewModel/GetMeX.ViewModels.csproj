@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Exceptions\InsufficientDataException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\GetGoogleService.cs" />
     <Compile Include="Services\GetSongService.cs" />
     <Compile Include="Services\GetWeatherService.cs" />
     <Compile Include="Commands\AsyncCommand.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="Utilities\NullToVisibilityConverter.cs" />
     <Compile Include="VMs\DictionaryViewModel.cs" />
     <Compile Include="VMs\EmptyViewModel.cs" />
+    <Compile Include="VMs\GoogleSearchViewModel.cs" />
     <Compile Include="VMs\IViewModel.cs" />
     <Compile Include="VMs\J1fmViewModel.cs" />
     <Compile Include="VMs\WeatherViewModel.cs" />

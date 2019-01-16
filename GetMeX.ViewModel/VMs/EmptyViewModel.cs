@@ -6,8 +6,8 @@ namespace GetMeX.ViewModels.VMs
 {
 	public class EmptyViewModel : INotifyPropertyChanged, IViewModel
 	{
-		const string greeting = "Choose a feature to get started!";
-		const string hint = "Hint: Select a feature from the dropdown box above!";
+		private static string greeting = "Choose a feature to get started!";
+		private static string hint = "Hint: Select a feature from the dropdown box above!";
 		private string _usage;
 
 		public string Usage
