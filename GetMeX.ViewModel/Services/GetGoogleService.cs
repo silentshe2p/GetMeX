@@ -9,11 +9,13 @@ namespace GetMeX.ViewModels.Services
 {
     public class GetGoogleService
     {
-        private static string searchEndpoint = "https://www.google.com/search?q={0}&lr=lang_en";
+        private static string searchEndpoint = "https://www.google.com/search?q={0}&start={1}&lr=lang_en";
         private string query { get; set; }
-        public GetGoogleService(string q)
+        private int start { get; set; }
+        public GetGoogleService(string q, int s=0)
         {
             query = q;
+            start = s;
         }
 
         public async Task<List<SearchResult>> GetGoogleSearches()
@@ -21,8 +23,7 @@ namespace GetMeX.ViewModels.Services
             var results = new List<SearchResult>();
             using (var client = new HttpClient())
             {
-                var query = "dog";
-                var queryUri = string.Format(searchEndpoint, query);
+                var queryUri = string.Format(searchEndpoint, query, start);
                 var response = await client.GetStringAsync(queryUri);
                 var resultsPattern = "<h3 class=[\\s\\S]*?<span class=\"st\">[\\s\\S]*?</span>";
                 var headerPattern = @"<h3 class=[\s\S]*?/h3>";

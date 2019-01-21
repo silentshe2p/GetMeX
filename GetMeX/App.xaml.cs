@@ -1,6 +1,7 @@
-﻿using GetMeX.ViewModels.VMs;
-using System;
+﻿using System;
 using System.Windows;
+using GetMeX.Views;
+using GetMeX.ViewModels.VMs;
 
 namespace GetMeX
 {

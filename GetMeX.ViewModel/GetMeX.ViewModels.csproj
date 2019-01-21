@@ -43,6 +43,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\InsufficientDataException.cs" />
@@ -54,12 +55,19 @@
     <Compile Include="Commands\AsyncCommandBase.cs" />
     <Compile Include="Commands\IAsyncCommand.cs" />
     <Compile Include="Commands\NotifyTaskCompletion.cs" />
+    <Compile Include="Services\IViewService.cs" />
+    <Compile Include="Services\ViewService.cs" />
+    <Compile Include="Utilities\Messages\NewQueryMsg.cs" />
+    <Compile Include="Utilities\Messages\OldQueryMsg.cs" />
+    <Compile Include="Utilities\Messages\FetchResultsMsg.cs" />
+    <Compile Include="Utilities\Messages\UpdateViewMsg.cs" />
+    <Compile Include="Utilities\Messenger.cs" />
     <Compile Include="Utilities\NullToVisibilityConverter.cs" />
-    <Compile Include="VMs\DictionaryViewModel.cs" />
     <Compile Include="VMs\EmptyViewModel.cs" />
     <Compile Include="VMs\GoogleSearchViewModel.cs" />
     <Compile Include="VMs\IViewModel.cs" />
     <Compile Include="VMs\J1fmViewModel.cs" />
+    <Compile Include="VMs\SearchResultViewModel.cs" />
     <Compile Include="VMs\WeatherViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

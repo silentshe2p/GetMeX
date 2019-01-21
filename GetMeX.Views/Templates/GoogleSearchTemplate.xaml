@@ -1,0 +1,16 @@
+﻿<ResourceDictionary 
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vms="clr-namespace:GetMeX.ViewModels.VMs;assembly=GetMeX.ViewModels" >
+
+    <DataTemplate DataType="{x:Type vms:GoogleSearchViewModel}">
+        <Grid>
+            <TextBox Width="500"
+                    Text="{Binding Query}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="25" FontFamily="Consolas" TextAlignment="Center"
+                    Style="{DynamicResource MaterialDesignFloatingHintTextBox}"/>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

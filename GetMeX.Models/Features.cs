@@ -3,9 +3,7 @@
 	public enum Features
 	{
 		J1fm,
-		Weather
-		//Dictionary
-		//GoogleSearch,
-		//AmazonSearch
+		Weather,
+		GoogleSearch
 	}
 }
