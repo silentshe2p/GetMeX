@@ -11,9 +11,8 @@ namespace GetMeX.ViewModels.VMs
     public class SearchResultViewModel : INotifyPropertyChanged, IViewModel
     {
         private int _resultsPerPage = 10;
-        private int _currentResultsCount { get; set; }
         private List<SearchResult> _results { get; set; }
-        private int _currentPage { get; set; }
+        private int _largestDisplayResult { get; set; }
 
         private string _currentQuery;
 
@@ -42,7 +41,7 @@ namespace GetMeX.ViewModels.VMs
         public SearchResultViewModel()
         {
             _results = new List<SearchResult>();
-            _currentPage = 0;
+            _largestDisplayResult = 0;
             Messenger.Base.Register<List<SearchResult>>(this, OnListResultsReceived);
             Messenger.Base.Register<NewQueryMsg>(this, OnNewQueryMsgReceived);
             Messenger.Base.Register<OldQueryMsg>(this, OnOldQueryMsgReceived);
@@ -52,7 +51,7 @@ namespace GetMeX.ViewModels.VMs
         /// Query changed, flush _results
         private void OnNewQueryMsgReceived(NewQueryMsg m)
         {
-            _currentPage = 0;
+            _largestDisplayResult = 0;
             _results.Clear();
             CurrentQuery = m.Query;
         }
@@ -60,9 +59,8 @@ namespace GetMeX.ViewModels.VMs
         /// New request but query unchanged, reuse _results
         private void OnOldQueryMsgReceived(OldQueryMsg m)
         {
-            _currentPage = 0;
-            var pageStart = _currentPage * _resultsPerPage;
-            CurrentPageResults = (_results.Count >= pageStart) ? _results.GetRange(pageStart, _resultsPerPage) : _results;
+            _largestDisplayResult = 0;
+            CurrentPageResults = (_results.Count >= _resultsPerPage) ? _results.GetRange(0, _resultsPerPage) : _results;
         }
 
         /// Process received list of results
@@ -73,21 +71,17 @@ namespace GetMeX.ViewModels.VMs
                 _results.Add(res);
             }
             var total = _results.Count;
-            var pageStart = _currentPage * _resultsPerPage;
-            // Enough entries for current page
-            if (total >= (_currentPage+1)*_resultsPerPage)
+            // Enough entries for full page
+            if (total >= _largestDisplayResult + _resultsPerPage)
             {
-                CurrentPageResults = _results.GetRange(pageStart, _resultsPerPage);
+                CurrentPageResults = _results.GetRange(_largestDisplayResult, _resultsPerPage);
+                _largestDisplayResult += _resultsPerPage;
             }
-            // Not enough entries for current page
-            else if (total >= _currentPage*_resultsPerPage)
+            // Not enough entries for full page
+            else if (total >= _largestDisplayResult)
             {
-                CurrentPageResults = _results.GetRange(pageStart, total - pageStart);
-            }
-            // Only previous page
-            else
-            {
-                CurrentPageResults = _results;
+                CurrentPageResults = _results.GetRange(_largestDisplayResult, total - _largestDisplayResult);
+                _largestDisplayResult += total - _largestDisplayResult;
             }
         }
 

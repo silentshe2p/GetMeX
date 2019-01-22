@@ -24,15 +24,41 @@ namespace GetMeX.ViewModels.VMs
             }
         }
 
+        private string _language;
+
+        public string Language
+        {
+            get { return _language; }
+            set
+            {
+                _language = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private List<string> _availableLanguages;
+
+        public List<string> AvailableLanguages
+        {
+            get { return _availableLanguages; }
+            set {
+                _availableLanguages = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         public ViewService viewService { get; set; }
-        private string _cache { get; set; }
         private List<SearchResult> _results { get; set; }
+        private bool _queryUnchanged = true;
+        private LanguageCode _langCode = new LanguageCode();
 
         public GoogleSearchViewModel(Window view)
         {
-            _cache = "";
             viewService = new ViewService(view);
             Query = "";
+            Language = "Auto";
+            AvailableLanguages = _langCode.GetLanguages();
             DoWorkCommand = AsyncCommand.Create(DoWork);
             Messenger.Base.Register<FetchResultsMsg>(this, OnFetchResultsMsgReceived);
         }
@@ -40,36 +66,42 @@ namespace GetMeX.ViewModels.VMs
         public IAsyncCommand DoWorkCommand { get; private set; }
         public async Task DoWork()
         {
-            if (!_cache.Equals("") && _cache.Equals(Query))
+            if (_queryUnchanged)
             {
                 // Reuse old results
                 Messenger.Base.Send(new OldQueryMsg());
+                viewService.ShowView();
             }
             else
             {
-                _cache = Query;
                 // Flush old results waiting for new results
                 Messenger.Base.Send(new NewQueryMsg(Query));
 
-                GetGoogleService service = new GetGoogleService(Query);
+                GetGoogleService service = new GetGoogleService(Query, _langCode.LangToCode(Language));
                 var results = await service.GetGoogleSearches();
 
                 // Send new results and show results view
                 Messenger.Base.Send(results);
+                _queryUnchanged = true;
                 viewService.ShowView();
             }
         }
 
         private async void OnFetchResultsMsgReceived(FetchResultsMsg m)
         {
-            GetGoogleService service = new GetGoogleService(m.query, m.start);
+            GetGoogleService service = new GetGoogleService(m.query, _langCode.LangToCode(Language), m.start);
             var results = await service.GetGoogleSearches();
             Messenger.Base.Send(results);
+            _queryUnchanged = true;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
+            if (propertyName == "Query" || propertyName == "Language")
+            {
+                _queryUnchanged = false;
+            }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }

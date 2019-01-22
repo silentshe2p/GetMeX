@@ -5,12 +5,19 @@
 
     <DataTemplate DataType="{x:Type vms:GoogleSearchViewModel}">
         <Grid>
-            <TextBox Width="500"
+            <StackPanel>
+                <TextBox Width="500"
                     Text="{Binding Query}"
+                     Grid.Row="1"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     FontSize="25" FontFamily="Consolas" TextAlignment="Center"
                     Style="{DynamicResource MaterialDesignFloatingHintTextBox}"/>
+                <ComboBox ItemsSource="{Binding AvailableLanguages}"
+                    SelectedItem="{Binding Language, Mode=TwoWay}"
+					FontSize="12" FontStyle="Italic" FontFamily="Cambria"/>
+            </StackPanel>
+
         </Grid>
     </DataTemplate>
 </ResourceDictionary>
