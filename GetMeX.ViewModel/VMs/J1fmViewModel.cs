@@ -58,8 +58,9 @@ namespace GetMeX.ViewModels.VMs
 			Info = await service.GetSongInfo();
 			if (FileToAppend != null && File.Exists(FileToAppend))
 			{
-				string appendContent = Info.Artist + " - " + Info.Title;
-				File.AppendAllText(FileToAppend, appendContent + Environment.NewLine, new UnicodeEncoding());
+                var appendFormat = "{0} - {1} @ {2}";
+                var appendContent = string.Format(appendFormat, Info.Artist, Info.Title, Info.StoreUrl);
+				File.AppendAllText(FileToAppend, appendContent + Environment.NewLine, Encoding.Unicode);
 			}
 		}
 
