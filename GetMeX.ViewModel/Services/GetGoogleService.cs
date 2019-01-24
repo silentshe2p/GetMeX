@@ -26,14 +26,17 @@ namespace GetMeX.ViewModels.Services
             using (var client = new HttpClient())
             {
                 var response = await client.GetStringAsync(queryUri);
-                var resultsPattern = "<h3 class=[\\s\\S]*?<span class=\"st\">[\\s\\S]*?</span>";
+                // Capture until next tag in case span inside span
+                var resultsPattern = "<h3 class=[\\s\\S]*?<span class=\"st\">*[\\s\\S]*?</span>(?:<[\\s\\S]*?>)";
                 var headerPattern = @"<h3 class=[\s\S]*?/h3>";
-                var linkPattern = @"<cite>[\s\S]*?</cite>";
-                var descPattern = "<span class=\"st\">[\\s\\S]*?</span>";
+                var linkPattern = @"<cite[\s\S]*?/cite>";
+                var descPattern = "<span class=\"st\">[\\s\\S]*?/span>(?:<[\\s\\S]*?>)";
                 var bracketPattern = @"<[\s\S]*?>";
                 Regex resultsRegex = new Regex(resultsPattern);
+                int i = 1;
                 foreach (Match m in resultsRegex.Matches(response))
                 {
+                    i++;
                     Match headerRaw = Regex.Match(m.Value, headerPattern);
                     Match linkRaw = Regex.Match(m.Value, linkPattern);
                     Match descRaw = Regex.Match(m.Value, descPattern);
