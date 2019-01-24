@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Exceptions\InsufficientDataException.cs" />
+    <Compile Include="Exceptions\NoResultException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\GetGoogleService.cs" />
     <Compile Include="Services\GetSongService.cs" />
@@ -57,12 +58,14 @@
     <Compile Include="Commands\NotifyTaskCompletion.cs" />
     <Compile Include="Services\IViewService.cs" />
     <Compile Include="Services\ViewService.cs" />
+    <Compile Include="Utilities\Helper.cs" />
     <Compile Include="Utilities\Messages\NewQueryMsg.cs" />
     <Compile Include="Utilities\Messages\OldQueryMsg.cs" />
     <Compile Include="Utilities\Messages\FetchResultsMsg.cs" />
     <Compile Include="Utilities\Messages\UpdateViewMsg.cs" />
     <Compile Include="Utilities\Messenger.cs" />
     <Compile Include="Utilities\NullToVisibilityConverter.cs" />
+    <Compile Include="Utilities\CountConverter.cs" />
     <Compile Include="VMs\EmptyViewModel.cs" />
     <Compile Include="VMs\GoogleSearchViewModel.cs" />
     <Compile Include="VMs\IViewModel.cs" />

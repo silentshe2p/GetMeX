@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using GetMeX.Models;
+using GetMeX.ViewModels.Exceptions;
 using GetMeX.ViewModels.Services;
 using GetMeX.ViewModels.Utilities;
 using GetMeX.ViewModels.Utilities.Messages;
@@ -79,6 +80,10 @@ namespace GetMeX.ViewModels.VMs
 
                 GetGoogleService service = new GetGoogleService(Query, _langCode.LangToCode(Language));
                 var results = await service.GetGoogleSearches();
+                if (results == null || results.Count == 0)
+                {
+                    throw new NoResultException();
+                }
 
                 // Send new results and show results view
                 Messenger.Base.Send(results);

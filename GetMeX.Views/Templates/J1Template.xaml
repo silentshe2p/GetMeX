@@ -55,13 +55,15 @@
 				</TextBlock>
 
 			<TextBlock Text="Channel"
-						   Grid.Row="4" Grid.Column="1"
+						   Grid.Row="5" Grid.Column="1"
 						   Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
-			<ComboBox ItemsSource="{Binding Source={StaticResource channelArr}}" SelectedItem="{Binding Channel, Mode=TwoWay}"
-						  Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2"
-						  FontSize="12" FontStyle="Italic" FontFamily="Cambria"/>
-
-			<!--Song info display-->
+            <ComboBox ItemsSource="{Binding Source={StaticResource channelArr}}" 
+                          SelectedItem="{Binding Channel, Mode=TwoWay}"
+						  Grid.Row="4" Grid.RowSpan="2" Grid.Column="2" Grid.ColumnSpan="2" 
+						  FontSize="14" FontStyle="Italic" FontFamily="Cambria"
+                          Style="{DynamicResource MaterialDesignComboBox}"/>
+            
+            <!--Song info display-->
 			<Image Source="{Binding Info.CoverUrl}"
 					   Grid.Row="0" Grid.RowSpan="3" Grid.Column="7" Grid.ColumnSpan="3"/>
 

@@ -18,7 +18,7 @@ namespace GetMeX.ViewModels.Services
         {
             if (_view != null)
             {
-                _view.ShowDialog();
+                _view.Show();
             }
         }
 

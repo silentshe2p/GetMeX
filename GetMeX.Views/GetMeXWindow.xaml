@@ -65,7 +65,7 @@
 		<!--Status-->
 		<Grid Visibility="{Binding DoWorkCommand.Execution, 
 						   Converter={StaticResource NullToVisibilityConverter}}"
-			Grid.Row="4" Grid.ColumnSpan="4" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+			Grid.Row="4" Grid.ColumnSpan="6" HorizontalAlignment="Left" VerticalAlignment="Bottom">
 			<!--Busy indicator-->
 			<wpf:Card Visibility="{Binding DoWorkCommand.Execution.IsNotCompleted, 
 								   Converter={StaticResource BooleanToVisibilityConverter}}" 

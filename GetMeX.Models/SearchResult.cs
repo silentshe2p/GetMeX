@@ -9,8 +9,14 @@
             Description = d;
         }
 
+        public void SetIndex(int i)
+        {
+            Index = i;
+        }
+
         public string Header { get; set; }
         public string Link { get; set; }
         public string Description { get; set; }
+        public int Index { get; set; }
     }
 }

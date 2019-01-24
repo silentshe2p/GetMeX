@@ -8,27 +8,55 @@
 		Background="{DynamicResource MaterialDesignPaper}"
 		TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 
-	<Window.Resources>
+    <Window.Resources>
         <DataTemplate x:Key="srTemplate">
-            <StackPanel>
-                <TextBlock Text="{Binding Path=Header}" Margin="10"
+            <DockPanel>
+                <Viewbox StretchDirection="Both" Stretch="Uniform">
+                    <TextBlock Text="{Binding Index}"
+                        HorizontalAlignment="Left" VerticalAlignment="Center"
+                        TextAlignment="Center" MinWidth="60"
+                        Foreground="DarkGreen" FontSize="50"
+                        Style="{DynamicResource MaterialDesignHeadlineTextBlock}"/>
+                </Viewbox>
+
+                <StackPanel HorizontalAlignment="Right" Margin="20 0 0 0">
+                    <TextBlock Text="{Binding Header}" Margin="20 20 0 20"
+                               Foreground="Navy"
                            Style="{DynamicResource MaterialDesignHeadlineTextBlock}"/>
-                <TextBlock>
+                    <TextBlock>
                     <Hyperlink>
-						<TextBlock Text="{Binding Link}"/>
+						<TextBlock Text="{Binding Link}" 
+                                Style="{DynamicResource MaterialDesignCaptionTextBlock}"/>
 					</Hyperlink>
                 </TextBlock>
-                <TextBlock Text="{Binding Path=Description}" Margin="10"
+                    <TextBlock Text="{Binding Description}" Margin="0 10 0 10"
                            Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
-            </StackPanel>
+                </StackPanel>
+            </DockPanel>
         </DataTemplate>
 	</Window.Resources>
 
     <Grid>
-        <ScrollViewer>
-            <ListBox 
-                 ItemsSource="{Binding CurrentPageResults}"
-                 ItemTemplate="{StaticResource srTemplate}"/>
-        </ScrollViewer>
+        <ListView ItemsSource="{Binding CurrentPageResults}"
+                 ItemTemplate="{StaticResource srTemplate}">
+            <ListView.Template>
+                <ControlTemplate>
+                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                        <ItemsPresenter/>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </ListView.Template>
+        </ListView>
+
+        <Button Name="PrevButton"  Content="&lt;"
+                MinWidth="80" MinHeight="40" IsEnabled="{Binding HasPrev}"
+                VerticalAlignment="Top" HorizontalAlignment="Right"
+                Margin="0 0 80 0" Command="{Binding PreviousPageCommand}" 
+                Style="{DynamicResource MaterialDesignFlatButton}"/>
+        <Button Name="NextButton" Content="&gt;"
+                MinWidth="80" MinHeight="40" IsEnabled="{Binding HasNext}"
+                VerticalAlignment="Top" HorizontalAlignment="Right"
+                Command="{Binding DoWorkCommand}"
+                Style="{DynamicResource MaterialDesignFlatButton}"/>
     </Grid>
 </Window>
