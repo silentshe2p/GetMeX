@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using GetMeX.Models;
+using GetMeX.ViewModels.Services;
 using GetMeX.ViewModels.Utilities;
 using GetMeX.ViewModels.Utilities.Messages;
 
@@ -11,6 +12,8 @@ namespace GetMeX.ViewModels.VMs
     public class SearchResultViewModel : INotifyPropertyChanged, IViewModel
     {
         private static Helper _helper = new Helper();
+        private static ImageRetrieverService _iretriever = new ImageRetrieverService();
+        private static ImageSiteStructure _iss = new ImageSiteStructure();
         private List<SearchResult> _results { get; set; }
         private List<int> _pageHistory { get; set; }
         private int _currentPage { get; set; }
@@ -98,7 +101,7 @@ namespace GetMeX.ViewModels.VMs
         }
 
         /// Process received list of results
-        private void OnListResultsReceived(List<SearchResult> list)
+        private async void OnListResultsReceived(List<SearchResult> list)
         {
             if (list.Count < 1)
             {
@@ -109,7 +112,12 @@ namespace GetMeX.ViewModels.VMs
                 var total = _results.Count;
                 foreach (var res in list)
                 {
-                    res.SetIndex(total++);
+                    res.Index = total++;
+                    if (_iss.SearchKnownSite(res.Link) != null)
+                    {
+                        var imagesList = await _iretriever.RetrieveImages(res.Link);
+                        res.Images = imagesList;
+                    }
                     _results.Add(res);
                 }
                 _pageHistory.Add(list.Count);

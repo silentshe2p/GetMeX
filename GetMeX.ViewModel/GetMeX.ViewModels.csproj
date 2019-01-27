@@ -56,9 +56,11 @@
     <Compile Include="Commands\AsyncCommandBase.cs" />
     <Compile Include="Commands\IAsyncCommand.cs" />
     <Compile Include="Commands\NotifyTaskCompletion.cs" />
+    <Compile Include="Services\ImageRetrieverService.cs" />
     <Compile Include="Services\IViewService.cs" />
     <Compile Include="Services\ViewService.cs" />
     <Compile Include="Utilities\Helper.cs" />
+    <Compile Include="Utilities\Messages\FetchImagesMsg.cs" />
     <Compile Include="Utilities\Messages\NewQueryMsg.cs" />
     <Compile Include="Utilities\Messages\OldQueryMsg.cs" />
     <Compile Include="Utilities\Messages\FetchResultsMsg.cs" />
@@ -70,6 +72,7 @@
     <Compile Include="VMs\GoogleSearchViewModel.cs" />
     <Compile Include="VMs\IViewModel.cs" />
     <Compile Include="VMs\J1fmViewModel.cs" />
+    <Compile Include="VMs\OnlineImageViewerViewModel.cs" />
     <Compile Include="VMs\SearchResultViewModel.cs" />
     <Compile Include="VMs\WeatherViewModel.cs" />
   </ItemGroup>

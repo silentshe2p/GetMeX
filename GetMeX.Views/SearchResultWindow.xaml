@@ -3,12 +3,20 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ult="clr-namespace:GetMeX.ViewModels.Utilities;assembly=GetMeX.ViewModels"
 		mc:Ignorable="d"
 		Title="{Binding CurrentQuery, StringFormat={}{0} - Google search results}" Height="450" Width="800"
 		Background="{DynamicResource MaterialDesignPaper}"
 		TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 
     <Window.Resources>
+        <ult:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        <DataTemplate x:Key="irTemplate">
+            <Grid>
+                <Image Source="{Binding Link}" />
+            </Grid>
+        </DataTemplate>
+
         <DataTemplate x:Key="srTemplate">
             <DockPanel>
                 <Viewbox StretchDirection="Both" Stretch="Uniform">
@@ -24,13 +32,14 @@
                                Foreground="Navy"
                            Style="{DynamicResource MaterialDesignHeadlineTextBlock}"/>
                     <TextBlock>
-                    <Hyperlink>
-						<TextBlock Text="{Binding Link}" 
-                                Style="{DynamicResource MaterialDesignCaptionTextBlock}"/>
-					</Hyperlink>
-                </TextBlock>
+                        <Hyperlink>
+						    <TextBlock Text="{Binding Link}" 
+                                    Style="{DynamicResource MaterialDesignCaptionTextBlock}"/>
+					    </Hyperlink>
+                    </TextBlock>
                     <TextBlock Text="{Binding Description}" Margin="0 10 0 10"
                            Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+                    <ListView ItemsSource="{Binding Images}" ItemTemplate="{StaticResource irTemplate}" Visibility="{Binding Images, Converter={StaticResource NullToVisibilityConverter}}"/>
                 </StackPanel>
             </DockPanel>
         </DataTemplate>
