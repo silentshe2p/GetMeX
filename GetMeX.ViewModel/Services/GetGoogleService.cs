@@ -25,10 +25,10 @@ namespace GetMeX.ViewModels.Services
             {
                 var response = await client.GetStringAsync(queryUri);
                 // Capture until next tag in case span inside span
-                var resultsPattern = "<h3 class=[\\s\\S]*?<a href=[^\bhttp\b]*([^&;\"\\s]+)[\\s\\S]*?<span class=\"st\">[\\s\\S]*?</span>(?:<[\\s\\S]*?>)";
+                var resultsPattern = "<h3 class=[^>]*><a href=[^>]*((?=http)[^&;\"\\s]+)[\\s\\S]*?<span class=\"st\">[\\s\\S]*?</span>(?:<[^>]*>)";
                 var headerPattern = @"<h3 class=[\s\S]*?/h3>";
                 //var linkPattern = @"<cite[\s\S]*?/cite>"; /* shortened link ver */
-                var descPattern = "<span class=\"st\">[\\s\\S]*?/span>(?:<[\\s\\S]*?>)";
+                var descPattern = "<span class=\"st\">[\\s\\S]*?/span>(?:<[^>]*>)";
                 var imgPattern = @"<img src=([\S]*?) [\s\S]*?>";
                 var bracketPattern = @"<[\s\S]*?>";
                 Regex resultsRegex = new Regex(resultsPattern);
@@ -40,7 +40,7 @@ namespace GetMeX.ViewModels.Services
                     Match imgLink = Regex.Match(m.Value, imgPattern);
                     var header = Regex.Replace(headerRaw.Value, bracketPattern, string.Empty);
                     //var link = Regex.Replace(linkRaw.Value, bracketPattern, string.Empty); /* shortened link ver */
-                    var link = m.Groups[1].Value;
+                    var link = m.Groups[1].Value; /* full link ver - group ((?=http)[^&;\"\\s]+) */
                     var desc = Regex.Replace(descRaw.Value, bracketPattern, string.Empty);
                     results.Add(new SearchResult(WebUtility.HtmlDecode(header),
                                                                     WebUtility.UrlDecode(link), 

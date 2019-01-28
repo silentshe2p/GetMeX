@@ -29,7 +29,7 @@ namespace GetMeX.Views
         {
             var s = sender as Button;
             var data = s.DataContext as OnlineImageResult;
-            var imageWindow = new ImageZoomedWindow(data);
+            ImageZoomedWindow imageWindow = new ImageZoomedWindow(data);
             imageWindow.ShowDialog();
         }
     }
