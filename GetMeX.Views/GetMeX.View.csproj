@@ -53,6 +53,9 @@
     <Compile Include="GetMeXWindow.xaml.cs">
       <DependentUpon>GetMeXWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ImageZoomedWindow.xaml.cs">
+      <DependentUpon>ImageZoomedWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchResultWindow.xaml.cs">
       <DependentUpon>SearchResultWindow.xaml</DependentUpon>
@@ -61,6 +64,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="GetMeXWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ImageZoomedWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

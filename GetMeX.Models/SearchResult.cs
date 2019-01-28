@@ -4,11 +4,11 @@ namespace GetMeX.Models
 {
     public class SearchResult
     {
-        public SearchResult(string h, string l, string d)
+        public SearchResult(string header, string link, string description)
         {
-            Header = h;
-            Link = l;
-            Description = d;
+            Header = header;
+            Link = link;
+            Description = description;
         }
 
         public string Header { get; set; }

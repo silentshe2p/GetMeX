@@ -15,10 +15,9 @@ namespace GetMeX.ViewModels.Services.Tests
         [TestMethod()]
         public void GetSongInfo_NullStoreUrlCase_ReturnsCorrectInfo()
         {
-            GetGoogleService gs = new GetGoogleService("okasachiare", "auto");
-            var result = gs.GetGoogleSearches().Result;
-            var wtf = result[0].Header + result[0].Link + result[0].Description;
-            Assert.AreEqual(wtf, "Invader Invader");;
+            var wtf = new ImageRetrieverService();
+            var result = wtf.RetrieveImages("https://chan.sankakucomplex.com/").Result;
+            Assert.AreEqual(1, 1);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace GetMeX.ViewModels.VMs
         private static Helper _helper = new Helper();
         private static ImageRetrieverService _iretriever = new ImageRetrieverService();
         private static ImageSiteStructure _iss = new ImageSiteStructure();
+        private Queue<int> _fetchImageQueue { get; set; }
         private List<SearchResult> _results { get; set; }
         private List<int> _pageHistory { get; set; }
         private int _currentPage { get; set; }
@@ -30,9 +32,9 @@ namespace GetMeX.ViewModels.VMs
             }
         }
 
-        private List<SearchResult> _currentPageResults;
+        private ObservableCollection<SearchResult> _currentPageResults;
 
-        public List<SearchResult> CurrentPageResults
+        public ObservableCollection<SearchResult> CurrentPageResults
         {
             get { return _currentPageResults; }
             set
@@ -69,6 +71,7 @@ namespace GetMeX.ViewModels.VMs
         public SearchResultViewModel()
         {
             _results = new List<SearchResult>();
+            _fetchImageQueue = new Queue<int>();
             _pageHistory = new List<int>();
             _currentPage = -1;
             HasNext = true;
@@ -97,11 +100,11 @@ namespace GetMeX.ViewModels.VMs
             _currentPage = 0;
             HasNext = true;
             HasPrev = false;
-            CurrentPageResults = _results.GetRange(0, _pageHistory[_currentPage]);
+            CurrentPageResults = _results.GetRange(0, _pageHistory[_currentPage]).ToObservableCollection();
         }
 
         /// Process received list of results
-        private async void OnListResultsReceived(List<SearchResult> list)
+        private void OnListResultsReceived(List<SearchResult> list)
         {
             if (list.Count < 1)
             {
@@ -115,13 +118,39 @@ namespace GetMeX.ViewModels.VMs
                     res.Index = total++;
                     if (_iss.SearchKnownSite(res.Link) != null)
                     {
-                        var imagesList = await _iretriever.RetrieveImages(res.Link);
-                        res.Images = imagesList;
+                        _fetchImageQueue.Enqueue(res.Index);
                     }
                     _results.Add(res);
                 }
                 _pageHistory.Add(list.Count);
                 Forward();
+                // Start FetchImages task, run ReloadPage at completion using ui thread context to update page
+                Task.Run(async () => await FetchImages()).
+                                ContinueWith(ReloadPage, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+        }
+
+        private void ReloadPage(Task obj=null)
+        {
+            var currPageStart = (_currentPage == 0) ? 0
+                                            : _helper.ListSum(_pageHistory.GetRange(0, _currentPage));
+            CurrentPageResults = _results.GetRange(currPageStart, _pageHistory[_currentPage])
+                                                .ToObservableCollection();
+        }
+
+        /// Populate indexed search results in queue with images found from their link
+        private async Task FetchImages()
+        {
+            while (_fetchImageQueue.Count > 0)
+            {
+                var currRes = _fetchImageQueue.Dequeue();
+                var result = _results[currRes];
+                var images = await _iretriever.RetrieveImages(result.Link);
+                if (images != null && images.Count > 0)
+                {
+                    result.Images = images;
+                }
+                _results[currRes] = result;
             }
         }
 
@@ -145,12 +174,13 @@ namespace GetMeX.ViewModels.VMs
             return Task.CompletedTask;
         }
 
-        // Reassign CurrentPageResults to next _results sublist according to _pageHistory
+        /// Reassign CurrentPageResults to next _results sublist according to _pageHistory
         private void Forward()
         {
             var latest = (_currentPage < 0) ? 0
                                 : _helper.ListSum(_pageHistory.GetRange(0, _currentPage + 1 /*zero-indexed*/));
-            CurrentPageResults = _results.GetRange(latest, _pageHistory[++_currentPage]);
+            CurrentPageResults = _results.GetRange(latest, _pageHistory[++_currentPage])
+                                                .ToObservableCollection();
         }
 
         public IAsyncCommand PreviousPageCommand { get; private set; }
@@ -158,9 +188,7 @@ namespace GetMeX.ViewModels.VMs
         public Task Rewind()
         {
             _currentPage--;
-            var start = (_currentPage == 0) ? 0
-                                : _helper.ListSum(_pageHistory.GetRange(0, _currentPage));
-            CurrentPageResults = _results.GetRange(start, _pageHistory[_currentPage]);
+            ReloadPage();
             HasNext = true;
             // First page
             if (_currentPage < 1)

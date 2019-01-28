@@ -5,18 +5,28 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ult="clr-namespace:GetMeX.ViewModels.Utilities;assembly=GetMeX.ViewModels"
 		mc:Ignorable="d"
-		Title="{Binding CurrentQuery, StringFormat={}{0} - Google search results}" Height="450" Width="800"
+		Title="{Binding CurrentQuery, StringFormat={}{0} - Google search results}" Height="600" Width="800"
 		Background="{DynamicResource MaterialDesignPaper}"
 		TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 
     <Window.Resources>
         <ult:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+
+        <!-- Search results image template -->
         <DataTemplate x:Key="irTemplate">
             <Grid>
-                <Image Source="{Binding Link}" />
+                <Button Click="Image_ZoomIn">
+                    <Button.Template>
+                        <ControlTemplate >
+                            <Image Source="{Binding Link}" 
+                                        Stretch="Fill" MinHeight="100" MaxWidth="200"/>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
             </Grid>
         </DataTemplate>
 
+        <!-- Search results template -->
         <DataTemplate x:Key="srTemplate">
             <DockPanel>
                 <Viewbox StretchDirection="Both" Stretch="Uniform">
@@ -29,17 +39,26 @@
 
                 <StackPanel HorizontalAlignment="Right" Margin="20 0 0 0">
                     <TextBlock Text="{Binding Header}" Margin="20 20 0 20"
-                               Foreground="Navy"
-                           Style="{DynamicResource MaterialDesignHeadlineTextBlock}"/>
+                            Foreground="Navy"
+                            Style="{DynamicResource MaterialDesignHeadlineTextBlock}"/>
                     <TextBlock>
                         <Hyperlink>
-						    <TextBlock Text="{Binding Link}" 
+						    <TextBlock Text="{Binding Link}" MouseDown="Hyperlink_RequestNavigate"
                                     Style="{DynamicResource MaterialDesignCaptionTextBlock}"/>
 					    </Hyperlink>
                     </TextBlock>
                     <TextBlock Text="{Binding Description}" Margin="0 10 0 10"
-                           Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
-                    <ListView ItemsSource="{Binding Images}" ItemTemplate="{StaticResource irTemplate}" Visibility="{Binding Images, Converter={StaticResource NullToVisibilityConverter}}"/>
+                            Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+                    <ListBox ItemsSource="{Binding Images}"
+                            ItemTemplate="{StaticResource irTemplate}" 
+                            Visibility="{Binding Images, Converter={StaticResource NullToVisibilityConverter}}"
+                            BorderThickness="0" Background="Transparent">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
                 </StackPanel>
             </DockPanel>
         </DataTemplate>
@@ -50,18 +69,20 @@
                  ItemTemplate="{StaticResource srTemplate}">
             <ListView.Template>
                 <ControlTemplate>
-                    <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
                         <ItemsPresenter/>
                     </ScrollViewer>
                 </ControlTemplate>
             </ListView.Template>
         </ListView>
 
+        <!-- Previous button -->
         <Button Name="PrevButton"  Content="&lt;"
                 MinWidth="80" MinHeight="40" IsEnabled="{Binding HasPrev}"
                 VerticalAlignment="Top" HorizontalAlignment="Right"
                 Margin="0 0 80 0" Command="{Binding PreviousPageCommand}" 
                 Style="{DynamicResource MaterialDesignFlatButton}"/>
+        <!-- Next button -->
         <Button Name="NextButton" Content="&gt;"
                 MinWidth="80" MinHeight="40" IsEnabled="{Binding HasNext}"
                 VerticalAlignment="Top" HorizontalAlignment="Right"

@@ -16,7 +16,7 @@ namespace GetMeX.ViewModels.Services
         private int _descLimit = 20;
         private int _linkMinLength = 8; // http://_
 
-        public ImageRetrieverService(int limit=3)
+        public ImageRetrieverService(int limit=2)
         {
             _resultLimit = limit;
         }
@@ -52,15 +52,16 @@ namespace GetMeX.ViewModels.Services
                     {
                         break;
                     }
-                    var desc = WebUtility.HtmlDecode(m.Groups[descIndex].Value);
-                    if (desc.Length > _descLimit)
+                    var fullDesc = Regex.Unescape(WebUtility.HtmlDecode(m.Groups[descIndex].Value));
+                    var desc = "";
+                    if (fullDesc.Length > _descLimit)
                     {
-                        desc = desc.Substring(0, _descLimit) + "...";
+                        desc = fullDesc.Substring(0, _descLimit) + "...";
                     }
                     var link = m.Groups[linkIndex].Value;
-                    if (desc != null && link != null && link.Length > _linkMinLength)
+                    if (fullDesc != null && link != null && link.Length > _linkMinLength)
                     {
-                        results.Add(new OnlineImageResult(desc, link));
+                        results.Add(new OnlineImageResult(fullDesc, desc, link));
                         resultCount++;
                     }
                 }

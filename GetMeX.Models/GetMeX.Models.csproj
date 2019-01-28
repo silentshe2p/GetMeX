@@ -42,8 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Features.cs" />
+    <Compile Include="ImageSiteStructure.cs" />
     <Compile Include="J1Channels.cs" />
     <Compile Include="LanguageCode.cs" />
+    <Compile Include="OnlineImageResult.cs" />
     <Compile Include="OpenWeatherMapResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchResult.cs" />
