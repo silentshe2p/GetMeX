@@ -1,6 +1,8 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using GetMeX.Models;
 using GetMeX.ViewModels.VMs;
 
@@ -31,6 +33,26 @@ namespace GetMeX.Views
             var data = s.DataContext as OnlineImageResult;
             ImageZoomedWindow imageWindow = new ImageZoomedWindow(data);
             imageWindow.ShowDialog();
+        }
+
+        public void PlayCircle_FadeIn(object sender, RoutedEventArgs e)
+        {
+            var s = sender as MaterialDesignThemes.Wpf.PackIcon;
+            Random rand = new Random();
+            s.Foreground = new SolidColorBrush(
+                    Color.FromRgb(
+                        (byte)rand.Next(255),
+                        (byte)rand.Next(255),
+                        (byte)rand.Next(255)
+                    )
+            );
+            s.Opacity += 0.2;
+        }
+
+        public void PlayCircle_FadeOut(object sender, RoutedEventArgs e) {
+            var s = sender as MaterialDesignThemes.Wpf.PackIcon;
+            s.Foreground = new SolidColorBrush(Colors.Black);
+            s.Opacity -= 0.2;
         }
     }
 }

@@ -159,7 +159,6 @@ namespace GetMeX.ViewModels.VMs
         public Task DoWork()
         {
             var total = _helper.ListSum(_pageHistory);
-            var prevSum = _pageHistory.Count + _currentPage;
             // Forward in _pageHistory if there are enough entries in _results
             if (total < _results.Count)
             {

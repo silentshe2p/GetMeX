@@ -51,6 +51,8 @@
     <Compile Include="SearchResult.cs" />
     <Compile Include="SongInfo.cs" />
     <Compile Include="TempUnit.cs" />
+    <Compile Include="VideoConverter.cs" />
+    <Compile Include="VideoResult.cs" />
     <Compile Include="WeatherInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

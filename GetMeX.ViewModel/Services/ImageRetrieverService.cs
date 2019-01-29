@@ -58,7 +58,7 @@ namespace GetMeX.ViewModels.Services
                     {
                         desc = fullDesc.Substring(0, _descLimit) + "...";
                     }
-                    var link = m.Groups[linkIndex].Value;
+                    var link = Regex.Unescape(m.Groups[linkIndex].Value);
                     if (fullDesc != null && link != null && link.Length > _linkMinLength)
                     {
                         results.Add(new OnlineImageResult(fullDesc, desc, link));

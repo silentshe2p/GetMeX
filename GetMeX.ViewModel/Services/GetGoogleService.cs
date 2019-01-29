@@ -18,6 +18,16 @@ namespace GetMeX.ViewModels.Services
             queryUri = string.Format(searchEndpoint, query, start) + lp;
         }
 
+        public VideoResult VideoResultConverter(string link, string thumbnail) {
+            var converters = new VideoConverter();
+            var converter = converters.SearchKnownSite(link);
+            if (thumbnail == null || converter == null)
+            {
+                return null;
+            }
+            return new VideoResult(converter(link), thumbnail);
+        }
+
         public async Task<List<SearchResult>> GetGoogleSearches()
         {
             var results = new List<SearchResult>();
@@ -29,7 +39,7 @@ namespace GetMeX.ViewModels.Services
                 var headerPattern = @"<h3 class=[\s\S]*?/h3>";
                 //var linkPattern = @"<cite[\s\S]*?/cite>"; /* shortened link ver */
                 var descPattern = "<span class=\"st\">[\\s\\S]*?/span>(?:<[^>]*>)";
-                var imgPattern = @"<img src=([\S]*?) [\s\S]*?>";
+                var imgPattern = "<img src=[\"]*((?=http)[^\"\\s]+)[\\s\\S]*?>";
                 var bracketPattern = @"<[\s\S]*?>";
                 Regex resultsRegex = new Regex(resultsPattern);
                 foreach (Match m in resultsRegex.Matches(response))
@@ -42,9 +52,11 @@ namespace GetMeX.ViewModels.Services
                     //var link = Regex.Replace(linkRaw.Value, bracketPattern, string.Empty); /* shortened link ver */
                     var link = m.Groups[1].Value; /* full link ver - group ((?=http)[^&;\"\\s]+) */
                     var desc = Regex.Replace(descRaw.Value, bracketPattern, string.Empty);
+                    var thumbnail = imgLink.Groups[1].Value;
                     results.Add(new SearchResult(WebUtility.HtmlDecode(header),
-                                                                    WebUtility.UrlDecode(link), 
-                                                                    WebUtility.HtmlDecode(desc)));
+                                                                    WebUtility.UrlDecode(link),
+                                                                    WebUtility.HtmlDecode(desc),
+                                                                    VideoResultConverter(WebUtility.UrlDecode(link), thumbnail)));
                 }
             }
             return results;
