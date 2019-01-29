@@ -61,9 +61,9 @@
                         </ListBox.ItemsPanel>
                     </ListBox>
                     <Grid Visibility="{Binding Video, Converter={StaticResource NullToVisibilityConverter}}">
-                        <Button>
+                        <Button Click="Video_PlayEmbeded">
                             <Button.Template>
-                                <ControlTemplate >
+                                <ControlTemplate>
                                     <Grid HorizontalAlignment="Left">
                                         <Image Source="{Binding Video.Thumbnail}"
                                                 Stretch="Fill" MaxHeight="200" MaxWidth="300"/>

@@ -26,7 +26,9 @@ namespace GetMeX.Models
 
         public static string YouTubeConverter(string link)
         {
-            string embedLink = link.Replace("watch?v=", "embed/");
+            var mainLinkEnd = link.IndexOf("&");
+            var mainLink = (mainLinkEnd == -1) ? link : link.Substring(0, mainLinkEnd);
+            var embedLink = mainLink.Replace("watch?v=", "embed/");
             return embedLink;
         }
     }

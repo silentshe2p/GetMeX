@@ -21,7 +21,6 @@ namespace GetMeX.Views
 
         public void Hyperlink_RequestNavigate(object sender, RoutedEventArgs e)
         {
-            // The actual link is inside a TextBlock which is inside HyperLink
             var s = sender as TextBlock;
             Process.Start(new ProcessStartInfo(s?.Text));
             e.Handled = true;
@@ -33,6 +32,15 @@ namespace GetMeX.Views
             var data = s.DataContext as OnlineImageResult;
             ImageZoomedWindow imageWindow = new ImageZoomedWindow(data);
             imageWindow.ShowDialog();
+        }
+
+        public void Video_PlayEmbeded(object sender, RoutedEventArgs e)
+        {
+            var s = sender as Button;
+            var result = s.DataContext as SearchResult;
+            var video = result.Video;
+            OnlineVideoWindow videoWindow = new OnlineVideoWindow(video);
+            videoWindow.ShowDialog();
         }
 
         public void PlayCircle_FadeIn(object sender, RoutedEventArgs e)
