@@ -34,6 +34,14 @@ namespace GetMeX.Views
             imageWindow.ShowDialog();
         }
 
+        public void PageImages_Display(object sender, RoutedEventArgs e)
+        {
+            var s = sender as Button;
+            var result = s.DataContext as SearchResult;
+            PageImagesWindow imagesWindow = new PageImagesWindow(result.Link);
+            imagesWindow.ShowDialog();
+        }
+
         public void Video_PlayEmbeded(object sender, RoutedEventArgs e)
         {
             var s = sender as Button;

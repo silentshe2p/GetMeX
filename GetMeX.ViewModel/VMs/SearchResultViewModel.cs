@@ -125,7 +125,7 @@ namespace GetMeX.ViewModels.VMs
                 _pageHistory.Add(list.Count);
                 Forward();
                 // Start FetchImages task, run ReloadPage at completion using ui thread context to update page
-                Task.Run(async () => await FetchImages()).
+                Task.Run(async () => await FetchPreviewImages()).
                                 ContinueWith(ReloadPage, TaskScheduler.FromCurrentSynchronizationContext());
             }
         }
@@ -139,7 +139,7 @@ namespace GetMeX.ViewModels.VMs
         }
 
         /// Populate indexed search results in queue with images found from their link
-        private async Task FetchImages()
+        private async Task FetchPreviewImages()
         {
             while (_fetchImageQueue.Count > 0)
             {

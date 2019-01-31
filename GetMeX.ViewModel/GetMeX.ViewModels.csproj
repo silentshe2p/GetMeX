@@ -91,6 +91,7 @@
     <Compile Include="VMs\GoogleSearchViewModel.cs" />
     <Compile Include="VMs\IViewModel.cs" />
     <Compile Include="VMs\J1fmViewModel.cs" />
+    <Compile Include="VMs\PageImagesViewModel.cs" />
     <Compile Include="VMs\SearchResultViewModel.cs" />
     <Compile Include="VMs\WeatherViewModel.cs" />
   </ItemGroup>

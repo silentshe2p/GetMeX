@@ -1,5 +1,5 @@
-﻿using GetMeX.Models;
-using System.Windows;
+﻿using System.Windows;
+using GetMeX.Models;
 
 namespace GetMeX.Views
 {

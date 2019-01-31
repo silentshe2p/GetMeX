@@ -2,108 +2,115 @@
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+		xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:ult="clr-namespace:GetMeX.ViewModels.Utilities;assembly=GetMeX.ViewModels"
-		mc:Ignorable="d"
-		Title="{Binding CurrentQuery, StringFormat={}{0} - Google search results}" Height="600" Width="800"
+		xmlns:ult="clr-namespace:GetMeX.ViewModels.Utilities;assembly=GetMeX.ViewModels"
+		mc:Ignorable="d" Height="600" Width="800"
+		Title="{Binding CurrentQuery, StringFormat={}{0} - Google search results}"
 		Background="{DynamicResource MaterialDesignPaper}"
 		TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 
-    <Window.Resources>
-        <ult:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+	<Window.Resources>
+		<ult:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
 
-        <!-- Search results image template -->
-        <DataTemplate x:Key="irTemplate">
-            <Grid>
-                <Button Click="Image_ZoomIn">
-                    <Button.Template>
-                        <ControlTemplate >
-                            <Image Source="{Binding Link}" 
-                                        Stretch="Fill" MaxHeight="200" MaxWidth="300"/>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-            </Grid>
-        </DataTemplate>
+		<!-- Search results image template -->
+		<DataTemplate x:Key="irTemplate">
+			<Grid>
+				<Button Click="Image_ZoomIn">
+					<Button.Template>
+						<ControlTemplate >
+							<Image Source="{Binding Link}" 
+										Stretch="Fill" MaxHeight="200" MaxWidth="300"/>
+						</ControlTemplate>
+					</Button.Template>
+				</Button>
+			</Grid>
+		</DataTemplate>
 
-        <!-- Search results template -->
-        <DataTemplate x:Key="srTemplate">
-            <DockPanel>
-                <Viewbox StretchDirection="Both" Stretch="Uniform">
-                    <TextBlock Text="{Binding Index}"
-                        HorizontalAlignment="Left" VerticalAlignment="Center"
-                        TextAlignment="Center" MinWidth="60"
-                        Foreground="DarkGreen" FontSize="50"
-                        Style="{DynamicResource MaterialDesignHeadlineTextBlock}"/>
-                </Viewbox>
+		<!-- Search results template -->
+		<DataTemplate x:Key="srTemplate">
+			<DockPanel>
+				<Viewbox StretchDirection="Both" Stretch="Uniform">
+					<TextBlock Text="{Binding Index}"
+						HorizontalAlignment="Left" VerticalAlignment="Center"
+						TextAlignment="Center" MinWidth="60"
+						Foreground="DarkGreen" FontSize="50"
+						Style="{DynamicResource MaterialDesignHeadlineTextBlock}"/>
+				</Viewbox>
 
-                <StackPanel HorizontalAlignment="Right" Margin="20 0 0 0">
-                    <TextBlock Text="{Binding Header}" Margin="20 20 0 20"
-                            Foreground="Navy"
-                            Style="{DynamicResource MaterialDesignHeadlineTextBlock}"/>
-                    <TextBlock>
-                        <Hyperlink>
-						    <TextBlock Text="{Binding Link}" MouseDown="Hyperlink_RequestNavigate"
-                                    Style="{DynamicResource MaterialDesignCaptionTextBlock}"/>
-					    </Hyperlink>
-                    </TextBlock>
-                    <TextBlock Text="{Binding Description}" Margin="0 10 0 10"
-                            Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
-                    <ListBox ItemsSource="{Binding Images}"
-                            ItemTemplate="{StaticResource irTemplate}" 
-                            Visibility="{Binding Images, Converter={StaticResource NullToVisibilityConverter}}"
-                            BorderThickness="0" Background="Transparent">
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal"/>
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
-                    </ListBox>
-                    <Grid Visibility="{Binding Video, Converter={StaticResource NullToVisibilityConverter}}">
-                        <Button Click="Video_PlayEmbeded">
-                            <Button.Template>
-                                <ControlTemplate>
-                                    <Grid HorizontalAlignment="Left">
-                                        <Image Source="{Binding Video.Thumbnail}"
-                                                Stretch="Fill" MaxHeight="200" MaxWidth="300"/>
-                                        <Viewbox>
-                                            <materialDesign:PackIcon Panel.ZIndex="1000" Kind="PlayCircle" Foreground="Black"
-                                                                     MouseEnter="PlayCircle_FadeIn"  MouseLeave="PlayCircle_FadeOut" Opacity=".5" />
-                                        </Viewbox>
-                                    </Grid>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
-                    </Grid>
-                </StackPanel>
-            </DockPanel>
-        </DataTemplate>
+				<StackPanel HorizontalAlignment="Right" Margin="20 0 0 0">
+					<TextBlock Text="{Binding Header}" Margin="20 20 0 20"
+							Foreground="Navy"
+							Style="{DynamicResource MaterialDesignHeadlineTextBlock}"/>
+					<TextBlock>
+						<Hyperlink>
+							<TextBlock Text="{Binding Link}" MouseDown="Hyperlink_RequestNavigate"
+									Style="{DynamicResource MaterialDesignCaptionTextBlock}"/>
+						</Hyperlink>
+					</TextBlock>
+					<TextBlock Text="{Binding Description}" Margin="0 10 0 10"
+							Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+
+					<DockPanel Visibility="{Binding Images, Converter={StaticResource NullToVisibilityConverter}}">
+						<ListBox ItemsSource="{Binding Images}"
+									ItemTemplate="{StaticResource irTemplate}" 
+									BorderThickness="0" Background="Transparent">
+							<ListBox.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel Orientation="Horizontal"/>
+								</ItemsPanelTemplate>
+							</ListBox.ItemsPanel>
+						</ListBox>
+						<Button Name="Expand" Content=">>" Click="PageImages_Display"
+									MinWidth="40" MinHeight="20"
+									VerticalAlignment="Center"
+									Style="{DynamicResource MaterialDesignFlatAccentButton}"/>
+					</DockPanel>
+
+					<Grid Visibility="{Binding Video, Converter={StaticResource NullToVisibilityConverter}}">
+						<Button Click="Video_PlayEmbeded">
+							<Button.Template>
+								<ControlTemplate>
+									<Grid HorizontalAlignment="Left">
+										<Image Source="{Binding Video.Thumbnail}"
+												Stretch="Fill" MaxHeight="200" MaxWidth="300"/>
+										<Viewbox>
+											<materialDesign:PackIcon Panel.ZIndex="1000" Kind="PlayCircle" Foreground="Black"
+																	 MouseEnter="PlayCircle_FadeIn"  MouseLeave="PlayCircle_FadeOut" Opacity=".5" />
+										</Viewbox>
+									</Grid>
+								</ControlTemplate>
+							</Button.Template>
+						</Button>
+					</Grid>
+				</StackPanel>
+			</DockPanel>
+		</DataTemplate>
 	</Window.Resources>
 
-    <Grid>
-        <ListView ItemsSource="{Binding CurrentPageResults}"
-                 ItemTemplate="{StaticResource srTemplate}">
-            <ListView.Template>
-                <ControlTemplate>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <ItemsPresenter/>
-                    </ScrollViewer>
-                </ControlTemplate>
-            </ListView.Template>
-        </ListView>
+	<Grid>
+		<ListView ItemsSource="{Binding CurrentPageResults}"
+				 ItemTemplate="{StaticResource srTemplate}">
+			<ListView.Template>
+				<ControlTemplate>
+					<ScrollViewer VerticalScrollBarVisibility="Auto">
+						<ItemsPresenter/>
+					</ScrollViewer>
+				</ControlTemplate>
+			</ListView.Template>
+		</ListView>
 
-        <!-- Previous button -->
-        <Button Name="PrevButton"  Content="&lt;"
-                MinWidth="80" MinHeight="40" IsEnabled="{Binding HasPrev}"
-                VerticalAlignment="Top" HorizontalAlignment="Right"
-                Margin="0 0 80 0" Command="{Binding PreviousPageCommand}" 
-                Style="{DynamicResource MaterialDesignFlatButton}"/>
-        <!-- Next button -->
-        <Button Name="NextButton" Content="&gt;"
-                MinWidth="80" MinHeight="40" IsEnabled="{Binding HasNext}"
-                VerticalAlignment="Top" HorizontalAlignment="Right"
-                Command="{Binding DoWorkCommand}"
-                Style="{DynamicResource MaterialDesignFlatButton}"/>
-    </Grid>
+		<!-- Previous button -->
+		<Button Name="PrevButton"  Content="&lt;"
+				MinWidth="80" MinHeight="40" IsEnabled="{Binding HasPrev}"
+				VerticalAlignment="Top" HorizontalAlignment="Right"
+				Margin="0 0 80 0" Command="{Binding PreviousPageCommand}" 
+				Style="{DynamicResource MaterialDesignFlatButton}"/>
+		<!-- Next button -->
+		<Button Name="NextButton" Content="&gt;"
+				MinWidth="80" MinHeight="40" IsEnabled="{Binding HasNext}"
+				VerticalAlignment="Top" HorizontalAlignment="Right"
+				Command="{Binding DoWorkCommand}"
+				Style="{DynamicResource MaterialDesignFlatButton}"/>
+	</Grid>
 </Window>
