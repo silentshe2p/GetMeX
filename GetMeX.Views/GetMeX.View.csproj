@@ -94,6 +94,7 @@
       <DependentUpon>SearchResultWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Templates\J1Template.cs" />
+    <Compile Include="Templates\WeatherTemplate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="GetMeXWindow.xaml">

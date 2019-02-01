@@ -2,8 +2,10 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:fa="http://schemas.fontawesome.io/icons/"
 	xmlns:models="clr-namespace:GetMeX.Models;assembly=GetMeX.Models"
-	xmlns:vms="clr-namespace:GetMeX.ViewModels.VMs;assembly=GetMeX.ViewModels" >
+	xmlns:vms="clr-namespace:GetMeX.ViewModels.VMs;assembly=GetMeX.ViewModels" 
+    x:Class="GetMeX.Templates.WeatherTemplate" >
 
     <ObjectDataProvider x:Key="tempUnitArr" MethodName="GetNames"
 						ObjectType="{x:Type sys:Enum}">
@@ -85,7 +87,7 @@
 						  Grid.Column="5" Grid.ColumnSpan="1"
 						  FontSize="12" FontWeight="Bold"/>
 
-            <Expander Header="Api key (optional)"
+            <Expander Header="Api key (optional)" TextBlock.FontSize="14"
                          Grid.RowSpan="3"
                          Grid.Column="7" Grid.ColumnSpan="3">
                 <TextBox Text="{Binding ApiKey, Mode=TwoWay}"
@@ -133,6 +135,18 @@
 			<TextBlock Text="{Binding Info.Humidity}" Grid.Row="9" Grid.Column="7"
 						   Style="{DynamicResource MaterialDesignButtonTextBlock}"/>
 
-		</Grid>
+            <!-- Help corner -->
+            <Grid Grid.Row="7" Grid.RowSpan="3"
+                      Grid.Column="9" Grid.ColumnSpan="3">
+                <TextBlock Name="UsageHelp" Visibility="Hidden"
+                    Text="Input options:&#x0a;1. city(,country code)&#x0a;2. zip code(,country code)&#x0a;3. lat={}&amp;lon={}&#x0a;? (optional)  {float}"
+                    Style="{DynamicResource MaterialDesignButtonTextBlock}"/>
+                <fa:ImageAwesome VerticalAlignment="Bottom"
+                    HorizontalAlignment="Right"
+                    Icon="QuestionCircle" Height="30" Width="30"
+                    MouseEnter="Help_Show" MouseLeave="Help_Hide"/>
+            </Grid>
+
+        </Grid>
 	</DataTemplate>
 </ResourceDictionary>

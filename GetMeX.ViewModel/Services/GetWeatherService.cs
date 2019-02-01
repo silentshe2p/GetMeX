@@ -115,18 +115,18 @@ namespace GetMeX.ViewModels.Services
             {
                 var locationParts = location.Split(',');
                 var main = locationParts[0];
-                var countryCode = (locationParts.Length > 1) ? locationParts[1] : "";
+                var countryCode = (locationParts.Length > 1) ? (locationParts[1]  + ",") : "";
                 if (main.Contains("&")) // coordinate format
                 {
                     query = main;
                 }
                 else if (main.Any(char.IsDigit)) // zip code format
                 {
-                    query = "zip=" + main + "," + countryCode;
+                    query = "zip=" + main + countryCode;
                 }
                 else // city name format
                 {
-                    query = "q=" + main + "," + countryCode;
+                    query = "q=" + main + countryCode;
                 }
             }
             return query;
