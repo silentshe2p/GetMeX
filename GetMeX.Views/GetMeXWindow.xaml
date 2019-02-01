@@ -8,7 +8,7 @@
 		xmlns:sys="clr-namespace:System;assembly=mscorlib"
 		xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
 		mc:Ignorable="d"
-		Title="GetMeX" Height="450" Width="800"
+		Title="GetMeX" Height="600" Width="900"
 		Background="{DynamicResource MaterialDesignPaper}"
 		TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 

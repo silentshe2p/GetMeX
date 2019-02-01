@@ -1,4 +1,4 @@
 ﻿namespace GetMeX.Models
 {
-	public enum TempUnit { Celsius, Fahrenheit, Kelvin }
+	public enum TempUnit { C, F, K }
 }

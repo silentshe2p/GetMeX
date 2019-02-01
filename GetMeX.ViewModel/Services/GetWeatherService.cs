@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Device.Location;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.Serialization.Json;
@@ -13,28 +14,30 @@ namespace GetMeX.ViewModels.Services
 	public class GetWeatherService
 	{
 		private string openweathermapApiKey;
-		private string location;
 		private TempUnit unit;
 		private static string defaultApiKey = "eee0fe504018d3fe36d1640c8e54df85";
 		private static string openweathermapUrl = "http://api.openweathermap.org/data/2.5/weather?APPID=";
 		private static string statusIconUrl = "http://openweathermap.org/img/w/{0}.png";
 		private static string[] unitParam = { "metric", "imperial" };
+        private static GeoCoordinateWatcher _geoWatcher;
+        private int _geoWatcherTimeout = 1000; // milliseconds
+        private string _location { get; set; }
 
-		public GetWeatherService(string apiKey, string inputLocation, string unit = "Celsius")
+        public GetWeatherService(string apiKey, string inputLocation, string unit = "Celsius")
 		{
 			openweathermapApiKey = ((apiKey == null || apiKey == "") ? defaultApiKey : apiKey);
-			location = inputLocation;
+            _location = inputLocation;
 			switch(unit)
 			{
-				case "Fahrenheit":
-					this.unit = TempUnit.Fahrenheit;
+				case "F":
+					this.unit = TempUnit.F;
 					break;
-				case "Kelvin":
-					this.unit = TempUnit.Kelvin;
+				case "K":
+					this.unit = TempUnit.K;
 					break;
-				case "Celsius":
+				case "C":
 				default:
-					this.unit = TempUnit.Celsius;
+					this.unit = TempUnit.C;
 					break;
 			}
 		}
@@ -42,25 +45,21 @@ namespace GetMeX.ViewModels.Services
 		public async Task<WeatherInfo> GetWeatherInfo()
 		{
 			WeatherInfo result = new WeatherInfo();
-			if (location == null)
+			if (string.IsNullOrEmpty(_location))
 			{
-				var foundLocation = TryGetLocation();
-				if (foundLocation == null)
-				{
-					throw new InsufficientDataException("Location information is incorrect or not provided and couldn't be retrieved");
-				}
-				else
-				{
-					location = foundLocation;
-				}
-			}
-			else
-			{
-				location = "q=" + location;
-			}
+                // Try to figure out location using GeoCoordinateWatcher with timeout
+                InitiateGeoWatcher();
+                await Task.Delay(TimeSpan.FromMilliseconds(_geoWatcherTimeout));
+                if (string.IsNullOrEmpty(_location))
+                {
+                    throw new InsufficientDataException("Unable to retrieve location information");
+                }
+            }
 
-			var unitQuery = (unit == TempUnit.Kelvin) ? "" : string.Format("&units={0}", unitParam[(int)unit]);
-			var query = openweathermapUrl + openweathermapApiKey + '&' + location + unitQuery;
+            var locationQuery = LocationToQuery(_location);
+			var unitQuery = (unit == TempUnit.K) ? "" : string.Format("&units={0}", unitParam[(int)unit]);
+			var query = openweathermapUrl + openweathermapApiKey + '&' + locationQuery + unitQuery;
+
 			using (var client = new HttpClient())
 			{
 				var res = await client.GetAsync(query, HttpCompletionOption.ResponseHeadersRead);
@@ -94,18 +93,43 @@ namespace GetMeX.ViewModels.Services
 			return result;
 		}
 
-		public string TryGetLocation()
+        private void InitiateGeoWatcher()
 		{
-			GeoCoordinateWatcher watcher = new GeoCoordinateWatcher();
-			// Display permission dialog box and timeout after 1000 milliseconds
-			watcher.TryStart(false, TimeSpan.FromMilliseconds(1000));
-			GeoCoordinate coord = watcher.Position.Location;
-
-			if (coord.IsUnknown != true)
-			{
-				return string.Format("lat={0}&lon={1}", coord.Latitude, coord.Longitude);
-			}
-			return null;
+            _geoWatcher = new GeoCoordinateWatcher();
+            _geoWatcher.PositionChanged += 
+                new EventHandler<GeoPositionChangedEventArgs<GeoCoordinate>>(Watcher_PositionChanged);
+            _geoWatcher.Start();
 		}
-	}
+
+        private void Watcher_PositionChanged(object sender, GeoPositionChangedEventArgs<GeoCoordinate> e)
+        {
+            var foundLocation = e.Position.Location;
+            _location = string.Format("lat={0}&lon={1}", foundLocation.Latitude, foundLocation.Longitude);
+            _geoWatcher.Stop();
+        }
+
+        private string LocationToQuery(string location)
+        {
+            var query = "";
+            if (!string.IsNullOrEmpty(location))
+            {
+                var locationParts = location.Split(',');
+                var main = locationParts[0];
+                var countryCode = (locationParts.Length > 1) ? locationParts[1] : "";
+                if (main.Contains("&")) // coordinate format
+                {
+                    query = main;
+                }
+                else if (main.Any(char.IsDigit)) // zip code format
+                {
+                    query = "zip=" + main + "," + countryCode;
+                }
+                else // city name format
+                {
+                    query = "q=" + main + "," + countryCode;
+                }
+            }
+            return query;
+        }
+    }
 }

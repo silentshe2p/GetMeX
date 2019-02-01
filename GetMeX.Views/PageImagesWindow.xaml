@@ -5,20 +5,22 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:fa="http://schemas.fontawesome.io/icons/"
 			 xmlns:ult="clr-namespace:GetMeX.ViewModels.Utilities;assembly=GetMeX.ViewModels"
+             xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
 			 mc:Ignorable="d" ContentRendered="Window_ContentRendered"
              Title="{Binding Link}">
 
 	<Window.Resources>
 		<ult:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
-		<!-- Search results image template -->
+        <!-- Search results image template -->
 		<DataTemplate x:Key="irTemplate">
 			<Grid>
 				<Button>
 					<Button.Template>
 						<ControlTemplate >
 							<Image Source="{Binding Link}" 
-											Stretch="Fill" MaxHeight="200" MaxWidth="300"/>
+										Stretch="Fill" MaxHeight="200" MaxWidth="300"/>
 						</ControlTemplate>
 					</Button.Template>
 				</Button>
@@ -26,18 +28,35 @@
 		</DataTemplate>
 	</Window.Resources>
 
-	<Grid>
-		<fa:ImageAwesome Icon="Refresh" Spin="True" Height="48" Width="48"/>
-		<Grid>
-			<ListBox ItemsSource="{Binding Images}"
-							ItemTemplate="{StaticResource irTemplate}" 
-							BorderThickness="0" Background="Transparent">
-				<ListBox.ItemsPanel>
-					<ItemsPanelTemplate>
-						<StackPanel Orientation="Horizontal"/>
-					</ItemsPanelTemplate>
-				</ListBox.ItemsPanel>
-			</ListBox>
-		</Grid>
-	</Grid>
+    <Grid Visibility="{Binding DoWorkCommand.Execution, 
+                                Converter={StaticResource NullToVisibilityConverter}}">
+        <!-- Spinner -->
+        <fa:ImageAwesome Icon="Refresh" Spin="True" Height="48" Width="48"
+                        Visibility="{Binding DoWorkCommand.Execution.IsNotCompleted, 
+                                        Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+        <!-- Images display -->
+        <ListBox ItemsSource="{Binding Images}"
+						ItemTemplate="{StaticResource irTemplate}" 
+						BorderThickness="0" Background="Transparent"
+                        Visibility="{Binding DoWorkCommand.Execution.IsCompleted,
+                                        Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+
+        <!-- Error & retry -->
+        <Grid Visibility="{Binding DoWorkCommand.Execution.IsFaulted, NotifyOnTargetUpdated=True,
+                                    Converter={StaticResource BooleanToVisibilityConverter}}">
+            <fa:ImageAwesome Icon="ExclamationCircle" Height="48" Width="48"/>
+            <wpf:Card Content="{Binding DoWorkCommand.Execution.ErrorMessage}" 
+					            FontSize="14" Background="Orange"/>
+            <Button Command="{Binding DoWorkCommand}">
+                <fa:ImageAwesome Icon="Repeat" Height="48" Width="48"/>
+            </Button>
+        </Grid>
+    </Grid>
 </Window>

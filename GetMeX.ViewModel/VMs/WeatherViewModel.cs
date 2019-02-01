@@ -1,11 +1,8 @@
 ﻿using GetMeX.Models;
 using GetMeX.ViewModels.Services;
-using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace GetMeX.ViewModels.VMs
 {
@@ -58,7 +55,7 @@ namespace GetMeX.ViewModels.VMs
 		public WeatherViewModel(string inputLocation = null, string unit = null)
 		{
 			InputLocation = inputLocation;
-			TempUnit = (unit == null) ? "Celsius" : unit;
+			TempUnit = (unit == null) ? "C" : unit;
 			DoWorkCommand = AsyncCommand.Create(DoWork);
 		}
 
