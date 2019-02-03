@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Features.cs" />
+    <Compile Include="GoogleSuggestion.cs" />
     <Compile Include="ImageSiteStructure.cs" />
     <Compile Include="J1Channels.cs" />
     <Compile Include="LanguageCode.cs" />

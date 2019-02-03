@@ -1,24 +1,58 @@
 ﻿<ResourceDictionary 
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:vms="clr-namespace:GetMeX.ViewModels.VMs;assembly=GetMeX.ViewModels" 
-    xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes">
+	xmlns:vms="clr-namespace:GetMeX.ViewModels.VMs;assembly=GetMeX.ViewModels"
+    xmlns:ult="clr-namespace:GetMeX.ViewModels.Utilities;assembly=GetMeX.ViewModels"
+    xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
+    x:Class="GetMeX.Templates.GoogleSearchTemplate">
+
+    <ult:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
+    <DataTemplate x:Key="suggestionTemplate">
+        <TextBlock Text="{Binding Suggestion}" FontSize="16"/>
+    </DataTemplate>
 
     <DataTemplate DataType="{x:Type vms:GoogleSearchViewModel}">
         <Grid>
-            <TextBox Width="500" wpf:HintAssist.Hint="query input"
-                    Text="{Binding Query}"
-                    Grid.Row="1"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontSize="24" FontFamily="Consolas" TextAlignment="Center"
-                    Style="{DynamicResource MaterialDesignFloatingHintTextBox}"/>
-            <ComboBox ItemsSource="{Binding AvailableLanguages}"
-                    SelectedItem="{Binding Language, Mode=TwoWay}" 
-                    HorizontalAlignment="Left" VerticalAlignment="Top"
-					FontSize="14" FontFamily="Cambria"
-                    Style="{DynamicResource MaterialDesignComboBox}"/>
+            <StackPanel Margin="120 90 120 0">
+                <!-- Input box -->
+                <TextBox  wpf:HintAssist.Hint="query input"
+                Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}"
+                Name="InputQuery"
+                VerticalAlignment="Center"
+                KeyUp="AutoComplete_TryStart"
+                FontSize="24" FontFamily="Consolas" TextAlignment="Center"
+                Style="{DynamicResource MaterialDesignFloatingHintTextBox}">
+                    <TextBox.InputBindings>
+                        <KeyBinding Command="{Binding DoWorkCommand}" Key="Enter"/>
+                    </TextBox.InputBindings>
+                </TextBox>
 
+                <!-- Suggestions -->
+                <Grid Visibility="{Binding Suggestions, 
+                                        Converter={StaticResource NullToVisibilityConverter}}"
+                        Panel.ZIndex="1000">
+                    <ListBox ItemsSource="{Binding Suggestions}" ItemTemplate="{StaticResource suggestionTemplate}" BorderThickness="0" Background="Transparent">
+
+                    </ListBox>
+                </Grid>
+            </StackPanel>
+
+            <!-- Suggestion toggle -->
+            <CheckBox Margin="90" Name="SuggestionCheckBox"
+                HorizontalAlignment="Right"
+                IsChecked="{Binding SuggestionAllowed}"
+                Style="{DynamicResource MaterialDesignActionLightCheckBox}">
+                Show suggestions
+            </CheckBox>
+
+            <!-- Language selection -->
+            <ComboBox ItemsSource="{Binding AvailableLanguages}"
+                    SelectedItem="{Binding Language, Mode=TwoWay}"
+                    HorizontalAlignment="Left" VerticalAlignment="Top"
+					FontSize="14" FontFamily="Cambria" Margin="40"
+                    Style="{DynamicResource MaterialDesignComboBox}"/>
         </Grid>
     </DataTemplate>
 </ResourceDictionary>

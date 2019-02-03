@@ -74,6 +74,7 @@
     <Compile Include="Commands\AsyncCommandBase.cs" />
     <Compile Include="Commands\IAsyncCommand.cs" />
     <Compile Include="Commands\NotifyTaskCompletion.cs" />
+    <Compile Include="Services\GoogleSuggestionService.cs" />
     <Compile Include="Services\ImageRetrieverService.cs" />
     <Compile Include="Services\IViewService.cs" />
     <Compile Include="Services\ViewService.cs" />

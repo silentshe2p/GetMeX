@@ -9,8 +9,8 @@ namespace GetMeX.ViewModels.Services
 {
     public class GetGoogleService
     {
-        private static string searchEndpoint = "https://www.google.com/search?q={0}&start={1}";
-        private static string langParam = "&lr=lang_{0}";
+        private const string searchEndpoint = "https://www.google.com/search?q={0}&start={1}";
+        private const string langParam = "&lr=lang_{0}";
         private string queryUri { get; set; }
         public GetGoogleService(string query, string lang, int start=0)
         {
@@ -35,10 +35,10 @@ namespace GetMeX.ViewModels.Services
             {
                 var response = await client.GetStringAsync(queryUri);
                 // Capture until next tag in case span inside span
-                var resultsPattern = "<h3 class=[^>]*><a href=[^>]*((?=http)[^&;\"\\s]+)[\\s\\S]*?<span class=\"st\">[\\s\\S]*?</span>(?:<[^>]*>)";
+                var resultsPattern = "<h3 class=[^>]*><a href=[^>]*((?=http)[^&;\"\\s]+)[\\s\\S]*?<span [^>]*?class=\"st\">[\\s\\S]*?</span>(?:<[^>]*>)";
                 var headerPattern = @"<h3 class=[\s\S]*?/h3>";
                 //var linkPattern = @"<cite[\s\S]*?/cite>"; /* shortened link ver */
-                var descPattern = "<span class=\"st\">[\\s\\S]*?/span>(?:<[^>]*>)";
+                var descPattern = "<span [^>]*?class=\"st\">[\\s\\S]*?/span>(?:<[^>]*>)";
                 var imgPattern = "<img src=[\"]*((?=http)[^\"\\s]+)[\\s\\S]*?>";
                 var bracketPattern = @"<[\s\S]*?>";
                 Regex resultsRegex = new Regex(resultsPattern);

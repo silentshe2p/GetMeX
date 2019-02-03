@@ -48,6 +48,29 @@ namespace GetMeX.ViewModels.VMs
             }
         }
 
+        private List<GoogleSuggestion> _suggestions;
+
+        public List<GoogleSuggestion> Suggestions
+        {
+            get { return _suggestions; }
+            set
+            {
+                _suggestions = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _suggestionAllowed;
+
+        public bool SuggestionAllowed
+        {
+            get { return _suggestionAllowed; }
+            set
+            {
+                _suggestionAllowed = value;
+                OnPropertyChanged();
+            }
+        }
 
         public ViewService viewService { get; set; }
         private List<SearchResult> _results { get; set; }
@@ -59,8 +82,10 @@ namespace GetMeX.ViewModels.VMs
             viewService = new ViewService(view);
             Query = "";
             Language = "Auto";
+            SuggestionAllowed = true;
             AvailableLanguages = _langCode.GetLanguages();
             DoWorkCommand = AsyncCommand.Create(DoWork);
+            SuggestionCommand = AsyncCommand.Create(FetchSuggestions);
             Messenger.Base.Register<FetchResultsMsg>(this, OnFetchResultsMsgReceived);
         }
 
@@ -100,12 +125,34 @@ namespace GetMeX.ViewModels.VMs
             _queryUnchanged = true;
         }
 
+        public IAsyncCommand SuggestionCommand { get; private set; }
+        private async Task FetchSuggestions()
+        {
+            if (string.IsNullOrEmpty(Query))
+            {
+                Suggestions = null;
+            }
+            else
+            {
+                GoogleSuggestionService service = new GoogleSuggestionService(Query, _langCode.LangToCode(Language));
+                var results = await service.GetSuggestions();
+                Suggestions = results;
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             if (propertyName == "Query" || propertyName == "Language")
             {
                 _queryUnchanged = false;
+            }
+            else if (propertyName == "SuggestionAllowed")
+            {
+                if (!SuggestionAllowed)
+                {
+                    Suggestions = null;
+                }
             }
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
