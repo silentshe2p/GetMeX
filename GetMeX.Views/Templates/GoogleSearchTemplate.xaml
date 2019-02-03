@@ -18,12 +18,12 @@
             <StackPanel Margin="120 90 120 0">
                 <!-- Input box -->
                 <TextBox  wpf:HintAssist.Hint="query input"
-                Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}"
-                Name="InputQuery"
-                VerticalAlignment="Center"
-                KeyUp="AutoComplete_TryStart"
-                FontSize="24" FontFamily="Consolas" TextAlignment="Center"
-                Style="{DynamicResource MaterialDesignFloatingHintTextBox}">
+                    Text="{Binding Query, UpdateSourceTrigger=PropertyChanged}"
+                    Name="InputQuery"
+                    VerticalAlignment="Center"
+                    KeyUp="AutoComplete_TryStart"
+                    FontSize="24" FontFamily="Consolas" TextAlignment="Center"
+                    Style="{DynamicResource MaterialDesignFloatingHintTextBox}">
                     <TextBox.InputBindings>
                         <KeyBinding Command="{Binding DoWorkCommand}" Key="Enter"/>
                     </TextBox.InputBindings>
@@ -31,11 +31,13 @@
 
                 <!-- Suggestions -->
                 <Grid Visibility="{Binding Suggestions, 
-                                        Converter={StaticResource NullToVisibilityConverter}}"
-                        Panel.ZIndex="1000">
-                    <ListBox ItemsSource="{Binding Suggestions}" ItemTemplate="{StaticResource suggestionTemplate}" BorderThickness="0" Background="Transparent">
-
-                    </ListBox>
+                                        Converter={StaticResource NullToVisibilityConverter}}">
+                    <ListBox ItemsSource="{Binding Suggestions}"
+                             HorizontalContentAlignment="Stretch"
+                             PreviewMouseLeftButtonDown="InputBox_UseSuggestion"
+                             KeyDown="InputBox_UseSuggestion_EnterKey"
+                             ItemTemplate="{StaticResource suggestionTemplate}"
+                             BorderThickness="0" Background="Transparent"/>
                 </Grid>
             </StackPanel>
 

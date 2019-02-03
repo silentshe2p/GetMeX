@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using GetMeX.Models;
+using GetMeX.ViewModels.Commands;
 using GetMeX.ViewModels.Exceptions;
 using GetMeX.ViewModels.Services;
 using GetMeX.ViewModels.Utilities;
@@ -84,6 +85,10 @@ namespace GetMeX.ViewModels.VMs
             Language = "Auto";
             SuggestionAllowed = true;
             AvailableLanguages = _langCode.GetLanguages();
+            SetQueryCommand = new RelayCommand(
+                (object q) => { Query = (string)q.ToString(); }, 
+                (object q) => { return !string.IsNullOrEmpty((string)q.ToString()); }
+            );
             DoWorkCommand = AsyncCommand.Create(DoWork);
             SuggestionCommand = AsyncCommand.Create(FetchSuggestions);
             Messenger.Base.Register<FetchResultsMsg>(this, OnFetchResultsMsgReceived);
@@ -138,6 +143,12 @@ namespace GetMeX.ViewModels.VMs
                 var results = await service.GetSuggestions();
                 Suggestions = results;
             }
+        }
+
+        public RelayCommand SetQueryCommand { get; private set; }
+        private void SetQuery(string query)
+        {
+            Query = query;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

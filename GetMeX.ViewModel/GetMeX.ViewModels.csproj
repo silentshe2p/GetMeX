@@ -64,6 +64,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\RelayCommand.cs" />
     <Compile Include="Exceptions\InsufficientDataException.cs" />
     <Compile Include="Exceptions\NoResultException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
