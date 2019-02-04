@@ -24,6 +24,18 @@ namespace GetMeX.ViewModels.VMs
             }
         }
 
+        private OnlineImageResult _selectedImage;
+        public OnlineImageResult SelectedImage
+        {
+            get { return _selectedImage; }
+            set
+            {
+                _selectedImage = value;
+                OnPropertyChanged();
+            }
+        }
+
+
         private ObservableCollection<OnlineImageResult> _images;
         public ObservableCollection<OnlineImageResult> Images
         {
@@ -40,6 +52,7 @@ namespace GetMeX.ViewModels.VMs
             _page = 0;
             _imgPerPage = 20;
             Link = link;
+            SelectedImage = null;
             Images = null;
             DoWorkCommand = AsyncCommand.Create(DoWork);
         }

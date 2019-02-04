@@ -14,18 +14,10 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
         <!-- Search results image template -->
-		<DataTemplate x:Key="irTemplate">
-			<Grid>
-				<Button>
-					<Button.Template>
-						<ControlTemplate >
-							<Image Source="{Binding Link}" 
-										Stretch="Fill" MaxHeight="200" MaxWidth="300"/>
-						</ControlTemplate>
-					</Button.Template>
-				</Button>
-			</Grid>
-		</DataTemplate>
+        <DataTemplate x:Key="irTemplate">
+            <Image Source="{Binding Link}" 
+						Stretch="Fill" MaxHeight="200" MaxWidth="300"/>
+        </DataTemplate>
 	</Window.Resources>
 
     <Grid Visibility="{Binding DoWorkCommand.Execution, 
@@ -35,28 +27,44 @@
                         Visibility="{Binding DoWorkCommand.Execution.IsNotCompleted, 
                                         Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
-        <!-- Images display -->
-        <ListBox ItemsSource="{Binding Images}"
+        <DockPanel>
+            <!-- Images list -->
+            <ListBox ItemsSource="{Binding Images}" DockPanel.Dock="Left"
 						ItemTemplate="{StaticResource irTemplate}" 
 						BorderThickness="0" Background="Transparent"
                         Visibility="{Binding DoWorkCommand.Execution.IsCompleted,
-                                        Converter={StaticResource BooleanToVisibilityConverter}}">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-        </ListBox>
+                                        Converter={StaticResource BooleanToVisibilityConverter}}"
+                        PreviewMouseLeftButtonDown="ClickedOn_ToSelectedImage"/>
+
+            <!-- Image zoom -->
+            <Viewbox>
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="{Binding SelectedImage.Link}"/>
+                    <TextBlock Text="{Binding SelectedImage.FullDesc}"
+                                       VerticalAlignment="Center" FontSize="20"/>
+                </StackPanel>
+            </Viewbox>
+        </DockPanel>
+
 
         <!-- Error & retry -->
         <Grid Visibility="{Binding DoWorkCommand.Execution.IsFaulted, NotifyOnTargetUpdated=True,
                                     Converter={StaticResource BooleanToVisibilityConverter}}">
-            <fa:ImageAwesome Icon="ExclamationCircle" Height="48" Width="48"/>
             <wpf:Card Content="{Binding DoWorkCommand.Execution.ErrorMessage}" 
 					            FontSize="14" Background="Orange"/>
-            <Button Command="{Binding DoWorkCommand}">
-                <fa:ImageAwesome Icon="Repeat" Height="48" Width="48"/>
-            </Button>
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                <fa:ImageAwesome Icon="ExclamationCircle" Height="48" Width="48"/>
+                <TextBlock Text="Error occured :(" Margin="220 105 0 0"
+                           FontSize="24"
+                           Style="{StaticResource MaterialDesignSubheadingTextBlock}"/>
+                <Button Command="{Binding DoWorkCommand}" Margin="0 200 90 0" 
+                            Background="Transparent" BorderThickness="0" Width="50">
+                    <fa:ImageAwesome Icon="Repeat" Height="48" Width="48"/>
+                </Button>
+                <TextBlock Text="Retry" Margin="200 210 0 0"
+                           FontSize="20"
+                           Style="{StaticResource MaterialDesignSubheadingTextBlock}"/>
+            </Grid>
         </Grid>
     </Grid>
 </Window>
