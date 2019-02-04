@@ -78,6 +78,8 @@
     <Compile Include="Services\GetGoogleServiceTests.cs" />
     <Compile Include="Services\GetSongTests.cs" />
     <Compile Include="Services\GetWeatherServiceTests.cs" />
+    <Compile Include="Services\GoogleSuggestionServiceTests.cs" />
+    <Compile Include="Services\ImageRetrieverServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

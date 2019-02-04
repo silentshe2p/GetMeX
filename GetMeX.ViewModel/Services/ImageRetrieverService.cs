@@ -9,8 +9,8 @@ namespace GetMeX.ViewModels.Services
 {
     public class ImageRetrieverService
     {
-        private string defaultOrder = "default";
-        private string commonPattern = "{0}['\"//]*([^,;'\"]+)"; // TODO: escaped " case
+        private const string defaultOrder = "default";
+        private const string commonPattern = "{0}['\"//]*([^,;'\"]+)"; // TODO: escaped " case
         private static ImageSiteStructure _iss = new ImageSiteStructure();
         private int _resultLimit;
         private int _descLimit = 20;

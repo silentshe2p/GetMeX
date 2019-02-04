@@ -115,7 +115,7 @@ namespace GetMeX.ViewModels.Services
             {
                 var locationParts = location.Split(',');
                 var main = locationParts[0];
-                var countryCode = (locationParts.Length > 1) ? (locationParts[1]  + ",") : "";
+                var countryCode = (locationParts.Length > 1) ? ("," + locationParts[1]) : "";
                 if (main.Contains("&")) // coordinate format
                 {
                     query = main;

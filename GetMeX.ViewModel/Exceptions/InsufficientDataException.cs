@@ -2,7 +2,7 @@
 
 namespace GetMeX.ViewModels.Exceptions
 {
-	class InsufficientDataException : Exception
+	public class InsufficientDataException : Exception
 	{
 		public InsufficientDataException()
             : base("Insufficient input data") { }
