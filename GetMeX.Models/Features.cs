@@ -4,6 +4,7 @@
 	{
 		J1fm,
 		Weather,
-		GoogleSearch
+		GoogleSearch,
+        Events
 	}
 }

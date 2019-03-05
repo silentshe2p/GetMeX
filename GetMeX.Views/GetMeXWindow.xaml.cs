@@ -12,18 +12,22 @@ namespace GetMeX.Views
 	{
 		private string _lastFeature = null;
 		private static J1fmViewModel _j1fmVM = new J1fmViewModel();
+
 		private static WeatherViewModel _weatherVM = new WeatherViewModel();
+
 		private static SearchResultViewModel _srVM = new SearchResultViewModel();
 		private static SearchResultWindow _gsView = new SearchResultWindow(_srVM);
 		private static GoogleSearchViewModel _gsVM = new GoogleSearchViewModel(_gsView);
 
-		public GetMeXWindow(IViewModel viewModel)
+        private static EventsViewModel _eVM = new EventsViewModel();
+
+        public GetMeXWindow(IViewModel viewModel)
 		{
 			InitializeComponent();
 			MainSelection.DropDownClosed += OnDropDownOpened;
 			MainSelection.SelectionChanged += OnSelectionChanged;
 			DataContext = viewModel;
-			this.Closing += ChildWindowCleanup;
+			Closing += ChildWindowCleanup;
 		}
 
 		private void OnDropDownOpened(object sender, EventArgs e)
@@ -51,6 +55,10 @@ namespace GetMeX.Views
 						DataContext = _gsVM;
 						_lastFeature = currentFeature;
 						break;
+                    case "Events":
+                        DataContext = _eVM;
+                        _lastFeature = currentFeature;
+                        break;
 					default:
 						break;
 				}

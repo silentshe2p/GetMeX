@@ -9,6 +9,7 @@
 				<ResourceDictionary Source="pack://application:,,,/GetMeX.Views;component/Templates/J1Template.xaml"/>
 				<ResourceDictionary Source="pack://application:,,,/GetMeX.Views;component/Templates/WeatherTemplate.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/GetMeX.Views;component/Templates/GoogleSearchTemplate.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/GetMeX.Views;component/Templates/EventsTemplate.xaml"/>
 				<!--Themes-->
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml"/>
 				<ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Blue.xaml"/>

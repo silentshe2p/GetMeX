@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using CefSharp;
+using CefSharp.Wpf;
 using GetMeX.Models;
 
 namespace GetMeX.Views
@@ -12,8 +13,10 @@ namespace GetMeX.Views
         public OnlineVideoWindow(VideoResult data)
         {
             InitializeComponent();
-            DataContext = data;
-            Browser.LifeSpanHandler = new LifeSpanHandler();
+            var browser = new ChromiumWebBrowser();
+            browser.Address = data.Link;
+            browser.LifeSpanHandler = new LifeSpanHandler();
+            DataContext = browser;
         }
 
         public class LifeSpanHandler : ILifeSpanHandler
