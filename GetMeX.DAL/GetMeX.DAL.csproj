@@ -86,8 +86,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GXEventService.cs" />
-    <Compile Include="GXEventInitializer.cs" />
     <Compile Include="GXEvents.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -98,6 +96,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GXEvents.edmx</DependentUpon>
     </Compile>
+    <Compile Include="GXEventService.cs" />
+    <Compile Include="GXEventInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +123,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CreateDb.sql" />
     <Content Include="GXEvents.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>GXEvents.edmx</DependentUpon>

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="GXEventsModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="GetMeX.Models.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Account">
           <Key>
             <PropertyRef Name="AID" />
@@ -20,8 +20,7 @@
             <PropertyRef Name="EID" />
           </Key>
           <Property Name="EID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="AID" Type="int" />
-          <Property Name="RID" Type="int" />
+          <Property Name="AID" Type="int" Nullable="false" />
           <Property Name="GID" Type="varchar" MaxLength="300" />
           <Property Name="Location" Type="nvarchar" MaxLength="100" />
           <Property Name="Summary" Type="nvarchar" MaxLength="100" Nullable="false" />
@@ -32,72 +31,31 @@
           <Property Name="EndDateTime" Type="datetimeoffset" Precision="7" />
           <Property Name="ColorId" Type="tinyint" Nullable="false" />
         </EntityType>
-        <EntityType Name="Recurrence">
-          <Key>
-            <PropertyRef Name="RID" />
-          </Key>
-          <Property Name="RID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="AID" Type="int" Nullable="false" />
-          <Property Name="Daynum" Type="smallint" Nullable="false" />
-        </EntityType>
-        <Association Name="FK__GXEvent__AID__2E1BDC42">
-          <End Role="Account" Type="Self.Account" Multiplicity="0..1" />
-          <End Role="GXEvent" Type="Self.GXEvent" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Account">
-              <PropertyRef Name="AID" />
-            </Principal>
-            <Dependent Role="GXEvent">
-              <PropertyRef Name="AID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__GXEvent__RID__2F10007B">
-          <End Role="Recurrence" Type="Self.Recurrence" Multiplicity="0..1" />
-          <End Role="GXEvent" Type="Self.GXEvent" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Recurrence">
-              <PropertyRef Name="RID" />
-            </Principal>
-            <Dependent Role="GXEvent">
-              <PropertyRef Name="RID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Recurrence__AID__29572725">
+        <Association Name="FK__GXEvent__AID__29572725">
           <End Role="Account" Type="Self.Account" Multiplicity="1" />
-          <End Role="Recurrence" Type="Self.Recurrence" Multiplicity="*" />
+          <End Role="GXEvent" Type="Self.GXEvent" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Account">
               <PropertyRef Name="AID" />
             </Principal>
-            <Dependent Role="Recurrence">
+            <Dependent Role="GXEvent">
               <PropertyRef Name="AID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="GXEventsModelStoreContainer">
+        <EntityContainer Name="GetMeXModelsStoreContainer">
           <EntitySet Name="Account" EntityType="Self.Account" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="GXEvent" EntityType="Self.GXEvent" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Recurrence" EntityType="Self.Recurrence" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__GXEvent__AID__2E1BDC42" Association="Self.FK__GXEvent__AID__2E1BDC42">
+          <AssociationSet Name="FK__GXEvent__AID__29572725" Association="Self.FK__GXEvent__AID__29572725">
             <End Role="Account" EntitySet="Account" />
             <End Role="GXEvent" EntitySet="GXEvent" />
-          </AssociationSet>
-          <AssociationSet Name="FK__GXEvent__RID__2F10007B" Association="Self.FK__GXEvent__RID__2F10007B">
-            <End Role="Recurrence" EntitySet="Recurrence" />
-            <End Role="GXEvent" EntitySet="GXEvent" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Recurrence__AID__29572725" Association="Self.FK__Recurrence__AID__29572725">
-            <End Role="Account" EntitySet="Account" />
-            <End Role="Recurrence" EntitySet="Recurrence" />
           </AssociationSet>
         </EntityContainer>
       </Schema>
     </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="GXEventsModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <Schema Namespace="GetMeX.Models" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityType Name="Account">
           <Key>
             <PropertyRef Name="AID" />
@@ -107,16 +65,14 @@
           <Property Name="LastSync" Type="DateTimeOffset" Nullable="false" Precision="7" />
           <Property Name="Finished" Type="Int32" Nullable="false" />
           <Property Name="Missed" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="GXEvents" Relationship="Self.FK__GXEvent__AID__2E1BDC42" FromRole="Account" ToRole="GXEvent" />
-          <NavigationProperty Name="Recurrences" Relationship="Self.FK__Recurrence__AID__29572725" FromRole="Account" ToRole="Recurrence" />
+          <NavigationProperty Name="GXEvents" Relationship="Self.FK__GXEvent__AID__29572725" FromRole="Account" ToRole="GXEvent" />
         </EntityType>
         <EntityType Name="GXEvent">
           <Key>
             <PropertyRef Name="EID" />
           </Key>
           <Property Name="EID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="AID" Type="Int32" />
-          <Property Name="RID" Type="Int32" />
+          <Property Name="AID" Type="Int32" Nullable="false" />
           <Property Name="GID" Type="String" MaxLength="300" FixedLength="false" Unicode="false" />
           <Property Name="Location" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Summary" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
@@ -126,69 +82,25 @@
           <Property Name="EndDate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="EndDateTime" Type="DateTimeOffset" Precision="7" />
           <Property Name="ColorId" Type="Byte" Nullable="false" />
-          <NavigationProperty Name="Account" Relationship="Self.FK__GXEvent__AID__2E1BDC42" FromRole="GXEvent" ToRole="Account" />
-          <NavigationProperty Name="Recurrence" Relationship="Self.FK__GXEvent__RID__2F10007B" FromRole="GXEvent" ToRole="Recurrence" />
+          <NavigationProperty Name="Account" Relationship="Self.FK__GXEvent__AID__29572725" FromRole="GXEvent" ToRole="Account" />
         </EntityType>
-        <EntityType Name="Recurrence">
-          <Key>
-            <PropertyRef Name="RID" />
-          </Key>
-          <Property Name="RID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="AID" Type="Int32" Nullable="false" />
-          <Property Name="Daynum" Type="Int16" Nullable="false" />
-          <NavigationProperty Name="Account" Relationship="Self.FK__Recurrence__AID__29572725" FromRole="Recurrence" ToRole="Account" />
-          <NavigationProperty Name="GXEvents" Relationship="Self.FK__GXEvent__RID__2F10007B" FromRole="Recurrence" ToRole="GXEvent" />
-        </EntityType>
-        <Association Name="FK__GXEvent__AID__2E1BDC42">
-          <End Role="Account" Type="Self.Account" Multiplicity="0..1" />
-          <End Role="GXEvent" Type="Self.GXEvent" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Account">
-              <PropertyRef Name="AID" />
-            </Principal>
-            <Dependent Role="GXEvent">
-              <PropertyRef Name="AID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__Recurrence__AID__29572725">
+        <Association Name="FK__GXEvent__AID__29572725">
           <End Role="Account" Type="Self.Account" Multiplicity="1" />
-          <End Role="Recurrence" Type="Self.Recurrence" Multiplicity="*" />
+          <End Role="GXEvent" Type="Self.GXEvent" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Account">
               <PropertyRef Name="AID" />
             </Principal>
-            <Dependent Role="Recurrence">
-              <PropertyRef Name="AID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__GXEvent__RID__2F10007B">
-          <End Role="Recurrence" Type="Self.Recurrence" Multiplicity="0..1" />
-          <End Role="GXEvent" Type="Self.GXEvent" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Recurrence">
-              <PropertyRef Name="RID" />
-            </Principal>
             <Dependent Role="GXEvent">
-              <PropertyRef Name="RID" />
+              <PropertyRef Name="AID" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="GXEventsEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Accounts" EntityType="Self.Account" />
           <EntitySet Name="GXEvents" EntityType="Self.GXEvent" />
-          <EntitySet Name="Recurrences" EntityType="Self.Recurrence" />
-          <AssociationSet Name="FK__GXEvent__AID__2E1BDC42" Association="Self.FK__GXEvent__AID__2E1BDC42">
+          <AssociationSet Name="FK__GXEvent__AID__29572725" Association="Self.FK__GXEvent__AID__29572725">
             <End Role="Account" EntitySet="Accounts" />
-            <End Role="GXEvent" EntitySet="GXEvents" />
-          </AssociationSet>
-          <AssociationSet Name="FK__Recurrence__AID__29572725" Association="Self.FK__Recurrence__AID__29572725">
-            <End Role="Account" EntitySet="Accounts" />
-            <End Role="Recurrence" EntitySet="Recurrences" />
-          </AssociationSet>
-          <AssociationSet Name="FK__GXEvent__RID__2F10007B" Association="Self.FK__GXEvent__RID__2F10007B">
-            <End Role="Recurrence" EntitySet="Recurrences" />
             <End Role="GXEvent" EntitySet="GXEvents" />
           </AssociationSet>
         </EntityContainer>
@@ -197,9 +109,9 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="GXEventsModelStoreContainer" CdmEntityContainer="GXEventsEntities">
+        <EntityContainerMapping StorageEntityContainer="GetMeXModelsStoreContainer" CdmEntityContainer="GXEventsEntities">
           <EntitySetMapping Name="Accounts">
-            <EntityTypeMapping TypeName="GXEventsModel.Account">
+            <EntityTypeMapping TypeName="GetMeX.Models.Account">
               <MappingFragment StoreEntitySet="Account">
                 <ScalarProperty Name="AID" ColumnName="AID" />
                 <ScalarProperty Name="Gmail" ColumnName="Gmail" />
@@ -210,11 +122,10 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="GXEvents">
-            <EntityTypeMapping TypeName="GXEventsModel.GXEvent">
+            <EntityTypeMapping TypeName="GetMeX.Models.GXEvent">
               <MappingFragment StoreEntitySet="GXEvent">
                 <ScalarProperty Name="EID" ColumnName="EID" />
                 <ScalarProperty Name="AID" ColumnName="AID" />
-                <ScalarProperty Name="RID" ColumnName="RID" />
                 <ScalarProperty Name="GID" ColumnName="GID" />
                 <ScalarProperty Name="Location" ColumnName="Location" />
                 <ScalarProperty Name="Summary" ColumnName="Summary" />
@@ -224,15 +135,6 @@
                 <ScalarProperty Name="EndDate" ColumnName="EndDate" />
                 <ScalarProperty Name="EndDateTime" ColumnName="EndDateTime" />
                 <ScalarProperty Name="ColorId" ColumnName="ColorId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Recurrences">
-            <EntityTypeMapping TypeName="GXEventsModel.Recurrence">
-              <MappingFragment StoreEntitySet="Recurrence">
-                <ScalarProperty Name="RID" ColumnName="RID" />
-                <ScalarProperty Name="AID" ColumnName="AID" />
-                <ScalarProperty Name="Daynum" ColumnName="Daynum" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

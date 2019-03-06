@@ -8,15 +8,19 @@ namespace GetMeX.DAL
     {
         public void InitializeDatabase(GXEventsEntities context)
         {
-            var account = new Account
+            if (context.Accounts.Find(1) == null)
             {
-                Gmail = "_local",
-                LastSync = DateTimeOffset.Now,
-                Finished = 0,
-                Missed = 0
-            };
-            context.Accounts.Add(account);
-            context.SaveChanges();
+                var account = new Account
+                {
+                    Gmail = "_local",
+                    LastSync = DateTimeOffset.Now,
+                    Finished = 0,
+                    Missed = 0
+                };
+                
+                context.Accounts.Add(account);
+                context.SaveChanges();
+            }
         }
     }
 }

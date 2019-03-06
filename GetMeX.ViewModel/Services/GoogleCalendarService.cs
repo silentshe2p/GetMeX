@@ -56,7 +56,7 @@ namespace GetMeX.ViewModels.Services
             });
         }
 
-        public async Task<Events> GetEvents(string calendar="primary")
+        public async Task<Events> GetEvents(DateTime timeMax, string calendar="primary")
         {
             if (calService == null)
             {
@@ -65,6 +65,7 @@ namespace GetMeX.ViewModels.Services
 
             EventsResource.ListRequest req = calService.Events.List(calendar);
             req.TimeMin = DateTime.Now;
+            req.TimeMax = timeMax;
             req.ShowDeleted = false;
             req.SingleEvents = true;
             req.OrderBy = EventsResource.ListRequest.OrderByEnum.Updated;

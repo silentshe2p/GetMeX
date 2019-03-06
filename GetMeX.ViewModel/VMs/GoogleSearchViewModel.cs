@@ -86,8 +86,8 @@ namespace GetMeX.ViewModels.VMs
             SuggestionAllowed = true;
             AvailableLanguages = _langCode.GetLanguages();
             SetQueryCommand = new RelayCommand(
-                (object q) => { Query = (string)q.ToString(); }, 
-                (object q) => { return !string.IsNullOrEmpty((string)q.ToString()); }
+                (object q) => { Query = q.ToString(); }, 
+                (object q) => { return !string.IsNullOrEmpty(q.ToString()); }
             );
             DoWorkCommand = AsyncCommand.Create(DoWork);
             SuggestionCommand = AsyncCommand.Create(FetchSuggestions);
@@ -146,10 +146,6 @@ namespace GetMeX.ViewModels.VMs
         }
 
         public RelayCommand SetQueryCommand { get; private set; }
-        private void SetQuery(string query)
-        {
-            Query = query;
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

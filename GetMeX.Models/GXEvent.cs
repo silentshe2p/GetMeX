@@ -5,8 +5,7 @@ namespace GetMeX.Models
     public partial class GXEvent
     {
         public int EID { get; set; }
-        public int? AID { get; set; }
-        public int? RID { get; set; }
+        public int AID { get; set; }
         public string GID { get; set; }
         public string Location { get; set; }
         public string Summary { get; set; }
@@ -18,6 +17,5 @@ namespace GetMeX.Models
         public byte ColorId { get; set; }
     
         public virtual Account Account { get; set; }
-        public virtual Recurrence Recurrence { get; set; }
     }
 }

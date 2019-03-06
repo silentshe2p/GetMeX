@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Globalization;
-using System.Threading.Tasks;
 using Google.Apis.Calendar.v3.Data;
 using NodaTime;
 using GetMeX.Models;
-using GetMeX.ViewModels.Services;
 
 namespace GetMeX.ViewModels.Utilities
 {
@@ -34,19 +32,12 @@ namespace GetMeX.ViewModels.Utilities
             return result;
         }
 
-        public static async Task<List<GXEvent>> ToGXEvents(this IEnumerable<Event> events, int accId)
+        public static List<GXEvent> ToGXEvents(this IEnumerable<Event> events, int accId)
         {
             var result = new List<GXEvent>();
-            var service = new GoogleCalendarService();
 
             foreach (var e in events)
             {
-                // TODO: process currence rule
-                //Event parent = null;    // Recurrence rules only exist on parent instance
-                //if (e.RecurringEventId != null)
-                //{
-                //    parent = await service.GetEvent(e.RecurringEventId);
-                //}
                 var startDateTime = (e.Start.DateTimeRaw != null) ? DateTimeOffset.Parse(e.Start.DateTimeRaw)
                                                                                                 : (DateTimeOffset?)null;
                 var endDateTime = (e.End.DateTimeRaw != null) ? DateTimeOffset.Parse(e.End.DateTimeRaw)
@@ -57,10 +48,10 @@ namespace GetMeX.ViewModels.Utilities
                     GID = e.Id,
                     Location = e.Location,
                     StartDate = startDateTime.HasValue ? startDateTime.Value.Date 
-                                        : DateTime.ParseExact(e.Start.Date, "yyyy-mm-dd", CultureInfo.InvariantCulture),
+                                        : DateTime.ParseExact(e.Start.Date, "yyyy-MM-dd", CultureInfo.InvariantCulture),
                     StartDateTime = startDateTime,
                     EndDate = endDateTime.HasValue ? endDateTime.Value.Date 
-                                        : DateTime.ParseExact(e.End.Date, "yyyy-mm-dd", CultureInfo.InvariantCulture),
+                                        : DateTime.ParseExact(e.End.Date, "yyyy-MM-dd", CultureInfo.InvariantCulture),
                     EndDateTime = endDateTime,
                     Summary = e.Summary,
                     Description = e.Description,

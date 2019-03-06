@@ -8,8 +8,7 @@ namespace GetMeX.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Account()
         {
-            GXEvents = new HashSet<GXEvent>();
-            Recurrences = new HashSet<Recurrence>();
+            this.GXEvents = new HashSet<GXEvent>();
         }
     
         public int AID { get; set; }
@@ -20,7 +19,5 @@ namespace GetMeX.Models
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<GXEvent> GXEvents { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Recurrence> Recurrences { get; set; }
     }
 }

@@ -28,37 +28,23 @@ namespace GetMeX.DAL
         //////////////////// Account Entity ////////////////////
         public async Task AddAccount(string gmail)
         {
-            try
-            {
-                var account = new Account {
-                    Gmail = gmail,
-                    LastSync = DateTime.Now,
-                    Finished = 0,
-                    Missed = 0
-                };
-                _db.Accounts.Add(account);
-                await _db.SaveChangesAsync();
-            }
-            catch (DataException)
-            {
-                throw new DataException("Failed to add new account");
-            }
+            var account = new Account {
+                Gmail = gmail,
+                LastSync = DateTime.Now,
+                Finished = 0,
+                Missed = 0
+            };
+            _db.Accounts.Add(account);
+            await _db.SaveChangesAsync();
         }
 
         public async Task UpdateLastSync(int accId)
         {
             var accountToUpdate = _db.Accounts.Find(accId);
-            try
+            if (accountToUpdate != null)
             {
-                if (accountToUpdate != null)
-                {
-                    accountToUpdate.LastSync = DateTime.Now;
-                    await _db.SaveChangesAsync();
-                }
-            }
-            catch (DataException)
-            {
-                throw new DataException("Failed to update last sync");
+                accountToUpdate.LastSync = DateTime.Now;
+                await _db.SaveChangesAsync();
             }
         }
 
@@ -76,14 +62,17 @@ namespace GetMeX.DAL
         //////////////////// GXEvent Entity ////////////////////
         public List<GXEvent> GetEvents(int limit = 0)
         {
-            var now = DateTime.Now;
-            return (limit > 0) ? _db.GXEvents.Where(e => e.StartDate >= now).Take(limit).ToList() 
-                                        : _db.GXEvents.Where(e => e.StartDate >= now).ToList();
+            var query = GetAllNoDuplicate(_db.GXEvents)
+                                    .Where(e => e.StartDate >= DateTime.Now)
+                                    .OrderBy(e => e.StartDate);
+
+            return (limit > 0) ? query.Take(limit).ToList()
+                                        : query.ToList();
         }
 
         public List<GXEvent> GetEvents(string searchQuery, int limit = 0)
         {
-            IQueryable<GXEvent> query;
+            var query = GetAllNoDuplicate(_db.GXEvents).Where(e => e.StartDate >= DateTime.Now);
             DateTime dt;
             if (DateTime.TryParse(searchQuery, out dt))
             {
@@ -100,41 +89,38 @@ namespace GetMeX.DAL
                                                     || e.Location.Contains(searchQuery) 
                                                     || e.Description.Contains(searchQuery));
             }
-            return (limit > 0) ? query.Take(limit).ToList() : query.ToList();
+
+            return (limit > 0) ? query.OrderBy(e => e.StartDate).Take(limit).ToList() 
+                                        : query.OrderBy(e => e.StartDate).ToList();
+        }
+
+        private IQueryable<GXEvent> GetAllNoDuplicate(DbSet<GXEvent> context)
+        {
+            var localEvents = context.Where(e => e.GID == null);
+            var eventsBothLocalAndOnline = context.Where(e => e.GID != null) // online or (local but saved online) event
+                                                                            .GroupBy(e => e.GID)
+                                                                            .Select(g => g.OrderBy(e => e.AID).FirstOrDefault()); // select local one (with smaller AID)
+            return localEvents.Union(eventsBothLocalAndOnline);
         }
 
         public async Task AddEvents(List<GXEvent> events, int accId)
         {
-            try
+            var account = _db.Accounts.Find(accId);
+            foreach (var ev in events)
             {
-                var account = _db.Accounts.Find(accId);
-                foreach (var ev in events)
-                {
-                    account.GXEvents.Add(ev);
-                    _db.GXEvents.Add(ev);
-                }
-                await _db.SaveChangesAsync();
+                account.GXEvents.Add(ev);
+                _db.GXEvents.Add(ev);
             }
-            catch (DataException)
-            {
-                throw new DataException("Failed to save events");
-            }
+            await _db.SaveChangesAsync();
         }
 
         public async Task EditEvent(int id, GXEvent newEvent)
         {
             var eventToEdit = _db.GXEvents.Find(id);
-            try
+            if (eventToEdit != null)
             {
-                if (eventToEdit != null)
-                {
-                    eventToEdit = newEvent;
-                    await _db.SaveChangesAsync();
-                }
-            }
-            catch (DataException)
-            {
-                throw new DataException("Failed to edit event");
+                eventToEdit = newEvent;
+                await _db.SaveChangesAsync();
             }
         }
 

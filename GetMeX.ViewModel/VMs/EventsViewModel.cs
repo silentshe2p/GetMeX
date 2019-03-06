@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -19,6 +20,20 @@ namespace GetMeX.ViewModels.VMs
 
         private GXEventService _dbs;
 
+        private string _lastFilterQuery;
+        private string _filterQuery;
+        public string FilterQuery
+        {
+            get { return _filterQuery; }
+            set
+            {
+                _filterQuery = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private ObservableCollection<GXEvent> _cachedEvents;
+
         private ObservableCollection<GXEvent> _events;
         public ObservableCollection<GXEvent> Events
         {
@@ -33,8 +48,49 @@ namespace GetMeX.ViewModels.VMs
         public EventsViewModel()
         {
             _dbs = new GXEventService();
+            _cachedEvents = null;
+            _lastFilterQuery = "";
+            FilterQuery = "";
             RefreshEvents(viewableEventsNum);
             DoWorkCommand = AsyncCommand.Create(DoWork);
+            FilterCommand = AsyncCommand.Create(Filter);
+        }
+
+        public IAsyncCommand FilterCommand { get; private set; }
+
+        public Task Filter()
+        {
+            if (!FilterQuery.IsNullOrEmpty())
+            {
+                try
+                {
+                    if (FilterQuery != _lastFilterQuery)
+                    {
+                        if (_lastFilterQuery.IsNullOrEmpty())
+                        {
+                            _cachedEvents = Events;
+                        }
+                        _lastFilterQuery = FilterQuery;
+                        char[] toTrim = { ' ', '"', '\'' };
+                        var query = FilterQuery.Trim(toTrim);
+                        Events = _dbs.GetEvents(query).ToObservableCollection();
+                    }
+                }
+                catch (Newtonsoft.Json.JsonException)
+                {
+                    throw new FormatException("Incorrect oauth token file format. Restore or delete it and try again");
+                }
+                catch (DataException)
+                {
+                    throw new DataException("Failed to modify database. Verify the connection and try again");
+                }
+            }
+            else
+            {
+                Events = _cachedEvents;
+            }
+
+            return Task.CompletedTask;
         }
 
         public IAsyncCommand DoWorkCommand { get; private set; }
@@ -43,34 +99,48 @@ namespace GetMeX.ViewModels.VMs
         {
             var service = new GoogleCalendarService();
             var accounts = _dbs.GetAvailableAccounts();
-            var events = await service.GetEvents();
+            var timeMax = DateTime.Now.AddYears(viewableYearRange);
 
-            if (events != null && !events.Items.IsNullOrEmpty())
+            try
             {
-                var email = events.Items[0].Creator.Email;
-                var foundAcc = accounts.Find(a => a.Email == email);
-                List<GXEvent> newEvents = null;
-                int targetAccountId = 0;
-
-                // Email exists within db, add new events from last sync timestamp
-                if (foundAcc != null)
+                var events = await service.GetEvents(timeMax);
+                if (events != null && !events.Items.IsNullOrEmpty())
                 {
-                    targetAccountId = foundAcc.AccId;
-                    var fromLastSync = events.Items.Where(e => e.Updated >= foundAcc.LastSync);
-                    newEvents = await fromLastSync.ToGXEvents(targetAccountId);
-                }
-                // New email
-                else
-                {
-                    targetAccountId = accounts.Max(a => a.AccId) + 1;
-                    await _dbs.AddAccount(email);
-                    newEvents = await events.Items.ToGXEvents(targetAccountId);
-                }
+                    var email = events.Items[0].Creator.Email;
+                    var foundAcc = accounts.Find(a => a.Email == email);
+                    List<GXEvent> newEvents = null;
+                    int targetAccountId = 0;
 
-                // Add new events to db
-                await _dbs.AddEvents(newEvents, targetAccountId);
-                await _dbs.UpdateLastSync(targetAccountId);
+                    // Email exists within db, add new events from last sync timestamp
+                    if (foundAcc != null)
+                    {
+                        targetAccountId = foundAcc.AccId;
+                        var fromLastSync = events.Items.Where(e => e.Updated >= foundAcc.LastSync);
+                        newEvents = fromLastSync.ToGXEvents(targetAccountId);
+                    }
+                    // New email
+                    else
+                    {
+                        targetAccountId = accounts.Max(a => a.AccId) + 1;
+                        await _dbs.AddAccount(email);
+                        newEvents = events.Items.ToGXEvents(targetAccountId);
+                    }
 
+                    // Add new events to db
+                    await _dbs.AddEvents(newEvents, targetAccountId);
+                    await _dbs.UpdateLastSync(targetAccountId);
+                }
+            }
+            catch (Newtonsoft.Json.JsonException)
+            {
+                throw new FormatException("Incorrect oauth token file format. Restore or delete it and try again");
+            }
+            catch (DataException)
+            {
+                throw new DataException("Failed to modify database. Verify the connection and try again");
+            }
+            finally
+            {
                 if (Events.Count < viewableEventsNum)
                 {
                     RefreshEvents(viewableEventsNum);
@@ -80,7 +150,14 @@ namespace GetMeX.ViewModels.VMs
 
         private void RefreshEvents(int limit)
         {
-            Events = _dbs.GetEvents(limit).ToObservableCollection();
+            try
+            {
+                Events = _dbs.GetEvents(limit).ToObservableCollection();
+            }
+            catch (DataException)
+            {
+                throw new DataException("Failed to retrieve events from database. Verify the connection and try again");
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

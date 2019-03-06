@@ -4,13 +4,10 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="7cd67eccd68a47289664543951b37a2e" Name="Diagram1">
-        <EntityTypeShape EntityType="GXEventsModel.Account" Width="1.5" PointX="0.75" PointY="3.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="GXEventsModel.GXEvent" Width="1.5" PointX="5.25" PointY="4.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="GXEventsModel.Recurrence" Width="1.5" PointX="3" PointY="7.875" IsExpanded="true" />
-        <AssociationConnector Association="GXEventsModel.FK__GXEvent__AID__2E1BDC42" ManuallyRouted="false" />
-        <AssociationConnector Association="GXEventsModel.FK__Recurrence__AID__29572725" ManuallyRouted="false" />
-        <AssociationConnector Association="GXEventsModel.FK__GXEvent__RID__2F10007B" ManuallyRouted="false" />
+      <Diagram DiagramId="8e3943edc52f40a885b693d99e0706e2" Name="Diagram1">
+        <EntityTypeShape EntityType="GetMeX.Models.Account" Width="1.5" PointX="0.75" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="GetMeX.Models.GXEvent" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <AssociationConnector Association="GetMeX.Models.FK__GXEvent__AID__29572725" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

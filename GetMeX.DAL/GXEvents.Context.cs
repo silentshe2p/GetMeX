@@ -18,6 +18,5 @@
 
         public virtual DbSet<Account> Accounts { get; set; }
         public virtual DbSet<GXEvent> GXEvents { get; set; }
-        public virtual DbSet<Recurrence> Recurrences { get; set; }
     }
 }
