@@ -12,13 +12,11 @@ namespace GetMeX.ViewModels.Services
 {
     public class GoogleCalendarService
     {
+        const string ApplicationName = "GetMeX - Events";
         private static string[] ViewScopes = { CalendarService.Scope.CalendarReadonly };
         private static string[] EditScopes = { CalendarService.Scope.Calendar,
                                                                 CalendarService.Scope.CalendarEvents,
                                                                 CalendarService.Scope.CalendarReadonly };
-        private const string ApplicationName = "GetMeX - Events";
-        private const string credentialPath = "auth/credentials.json";
-        private const string tokenPath = "auth/token.json";
         private UserCredential credential;
         private CalendarService calService;
         private bool editable;
@@ -32,6 +30,9 @@ namespace GetMeX.ViewModels.Services
 
         private async Task Auth(string[] scopes)
         {
+            var credentialPath = AppDomain.CurrentDomain.GetData("GoogleCalendarCredentialPath").ToString();
+            var tokenPath = AppDomain.CurrentDomain.GetData("GoogleCalendarTokenPath").ToString();
+
             if (!File.Exists(credentialPath))
             {
                 throw new FileNotFoundException("Client credential file not found");

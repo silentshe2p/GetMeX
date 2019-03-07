@@ -37,6 +37,7 @@ namespace GetMeX.Templates
             }
         }
 
+        /// Copy suggestion to input box on Enter key 
         private void InputBox_UseSuggestion_EnterKey(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using GetMeX.Views;
 using GetMeX.ViewModels.VMs;
@@ -10,10 +11,13 @@ namespace GetMeX
 	/// </summary>
 	public partial class App : Application
 	{
-		protected override void OnStartup(StartupEventArgs e)
+        const string gcCredentialPath = "auth/credentials.json";
+        const string gcTokenPath = "auth/token.json";
+
+        protected override void OnStartup(StartupEventArgs e)
 		{
 			base.OnStartup(e);
-			AppDomain.CurrentDomain.UnhandledException += AppDomainExceptionHandler;
+            AppDomain.CurrentDomain.UnhandledException += AppDomainExceptionHandler;
 			ComposeObject();
 			Current.MainWindow.Show();
 		}
@@ -23,6 +27,13 @@ namespace GetMeX
 			var viewModel = new EmptyViewModel();
 			Current.MainWindow = new GetMeXWindow(viewModel);
 		}
+
+        private void SetDirectoryVariables()
+        {
+            var currentDir = Directory.GetCurrentDirectory();
+            AppDomain.CurrentDomain.SetData("GoogleCalendarCredentialPath", Path.Combine(currentDir, gcCredentialPath));
+            AppDomain.CurrentDomain.SetData("GoogleCalendarTokenPath", Path.Combine(currentDir, gcTokenPath));
+        }
 
 		private void AppDomainExceptionHandler(object sender, UnhandledExceptionEventArgs args)
 		{

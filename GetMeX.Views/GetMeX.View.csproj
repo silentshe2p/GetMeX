@@ -95,6 +95,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventEditWindow.xaml.cs">
+      <DependentUpon>EventEditWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EventWideViewWindow.xaml.cs">
+      <DependentUpon>EventWideViewWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GetMeXWindow.xaml.cs">
       <DependentUpon>GetMeXWindow.xaml</DependentUpon>
     </Compile>
@@ -116,6 +122,14 @@
     <Compile Include="Templates\WeatherTemplate.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="EventEditWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="EventWideViewWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="GetMeXWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

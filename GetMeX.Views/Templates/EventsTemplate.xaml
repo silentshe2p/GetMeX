@@ -109,14 +109,27 @@
             <Button Name="CreateEvent"  Content="Create..."
                     VerticalAlignment="Center"
                     Grid.Row="12" Grid.Column="4" Grid.ColumnSpan="2"
-				    Command="{Binding}" 
+				    Command="{Binding EditEventCommand}" 
 				    Style="{DynamicResource MaterialDesignFlatButton}"/>
-            
-            <Button Name="AsAccount"  Content="Add account"
+
+            <Button Name="AsAccount"
                     VerticalAlignment="Center"
                     Grid.Row="12" Grid.Column="6" Grid.ColumnSpan="2"
-				    Command="{Binding DoWorkCommand}" 
-				    Style="{DynamicResource MaterialDesignFlatButton}"/>
+				    Command="{Binding SwitchAccountCommand}" 
+				    Style="{DynamicResource MaterialDesignFlatButton}">
+                <TextBlock>
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="Add account"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding LoggedIn}" Value="True">
+                                    <Setter Property="Text" Value="Switch account"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Button>
 
             <Button Name="WideView"  Content="Wide view"
                     VerticalAlignment="Center"

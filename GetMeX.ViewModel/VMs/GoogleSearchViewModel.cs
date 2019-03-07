@@ -15,7 +15,6 @@ namespace GetMeX.ViewModels.VMs
     public class GoogleSearchViewModel : INotifyPropertyChanged, IViewModel
     {
         private string _query;
-
         public string Query
         {
             get { return _query; }
@@ -27,7 +26,6 @@ namespace GetMeX.ViewModels.VMs
         }
 
         private string _language;
-
         public string Language
         {
             get { return _language; }
@@ -39,7 +37,6 @@ namespace GetMeX.ViewModels.VMs
         }
 
         private List<string> _availableLanguages;
-
         public List<string> AvailableLanguages
         {
             get { return _availableLanguages; }
@@ -50,7 +47,6 @@ namespace GetMeX.ViewModels.VMs
         }
 
         private List<GoogleSuggestion> _suggestions;
-
         public List<GoogleSuggestion> Suggestions
         {
             get { return _suggestions; }
@@ -62,7 +58,6 @@ namespace GetMeX.ViewModels.VMs
         }
 
         private bool _suggestionAllowed;
-
         public bool SuggestionAllowed
         {
             get { return _suggestionAllowed; }
@@ -80,11 +75,12 @@ namespace GetMeX.ViewModels.VMs
 
         public GoogleSearchViewModel(Window view)
         {
-            viewService = new ViewService(view);
             Query = "";
             Language = "Auto";
             SuggestionAllowed = true;
             AvailableLanguages = _langCode.GetLanguages();
+
+            // Init commands and messenger
             SetQueryCommand = new RelayCommand(
                 (object q) => { Query = q.ToString(); }, 
                 (object q) => { return !string.IsNullOrEmpty(q.ToString()); }
@@ -92,6 +88,9 @@ namespace GetMeX.ViewModels.VMs
             DoWorkCommand = AsyncCommand.Create(DoWork);
             SuggestionCommand = AsyncCommand.Create(FetchSuggestions);
             Messenger.Base.Register<FetchResultsMsg>(this, OnFetchResultsMsgReceived);
+
+            // View for search result displaying
+            viewService = new ViewService(view);
         }
 
         public IAsyncCommand DoWorkCommand { get; private set; }
@@ -122,6 +121,7 @@ namespace GetMeX.ViewModels.VMs
             }
         }
 
+        // New page of search result needed so fetch it and send to requester
         private async void OnFetchResultsMsgReceived(FetchResultsMsg m)
         {
             GetGoogleService service = new GetGoogleService(m.query, _langCode.LangToCode(Language), m.start);
@@ -131,7 +131,7 @@ namespace GetMeX.ViewModels.VMs
         }
 
         public IAsyncCommand SuggestionCommand { get; private set; }
-        private async Task FetchSuggestions()
+        private async Task FetchSuggestions() // Fetch suggestion for current inputted query
         {
             if (string.IsNullOrEmpty(Query))
             {

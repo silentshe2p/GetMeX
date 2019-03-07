@@ -156,7 +156,7 @@ namespace GetMeX.ViewModels.VMs
 
         public IAsyncCommand DoWorkCommand { get; private set; }
 
-        public Task DoWork()
+        public Task DoWork()  // Process to next page
         {
             var total = _helper.ListSum(_pageHistory);
             // Forward in _pageHistory if there are enough entries in _results

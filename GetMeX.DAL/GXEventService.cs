@@ -74,15 +74,19 @@ namespace GetMeX.DAL
         {
             var query = GetAllNoDuplicate(_db.GXEvents).Where(e => e.StartDate >= DateTime.Now);
             DateTime dt;
+
+            // Datetime query -> search for event with the same start date
             if (DateTime.TryParse(searchQuery, out dt))
             {
                 query = _db.GXEvents.Where(e => e.StartDate == dt);
             }
+            // Email query -> search for event belongs to the email
             else if (searchQuery.Contains("@gmail.com"))
             {
                 var events = _db.GXEvents.Include(e => e.Account);
                 query = events.Where(e => e.Account.Gmail == searchQuery);
             }
+            // Other string query -> search in Summary, Location and Description fields
             else
             {
                 query = _db.GXEvents.Where(e => e.Summary.Contains(searchQuery) 

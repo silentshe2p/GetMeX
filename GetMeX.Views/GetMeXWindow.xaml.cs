@@ -15,11 +15,15 @@ namespace GetMeX.Views
 
 		private static WeatherViewModel _weatherVM = new WeatherViewModel();
 
+        // Google search function vms
 		private static SearchResultViewModel _srVM = new SearchResultViewModel();
 		private static SearchResultWindow _gsView = new SearchResultWindow(_srVM);
 		private static GoogleSearchViewModel _gsVM = new GoogleSearchViewModel(_gsView);
 
-        private static EventsViewModel _eVM = new EventsViewModel();
+        // Event function vms
+        private static EventEditWindow _eeView = new EventEditWindow();
+        private static Window[] eventWindows = new Window[] { _eeView, _eeView };
+        private static EventsViewModel _eVM = new EventsViewModel(eventWindows);
 
         public GetMeXWindow(IViewModel viewModel)
 		{

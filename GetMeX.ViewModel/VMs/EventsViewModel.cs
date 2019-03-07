@@ -4,12 +4,16 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
 using GetMeX.Models;
 using GetMeX.DAL;
+using GetMeX.ViewModels.Commands;
 using GetMeX.ViewModels.Services;
 using GetMeX.ViewModels.Utilities;
+using GetMeX.ViewModels.Utilities.Messages;
 
 namespace GetMeX.ViewModels.VMs
 {
@@ -19,6 +23,9 @@ namespace GetMeX.ViewModels.VMs
         const int viewableEventsNum = 20;
 
         private GXEventService _dbs;
+        private List<AccountDetail> _accounts;
+
+        public bool LoggedIn { get; set; }
 
         private string _lastFilterQuery;
         private string _filterQuery;
@@ -45,15 +52,36 @@ namespace GetMeX.ViewModels.VMs
             }
         }
 
-        public EventsViewModel()
+        public Window editView { get; set; }
+        public Window wideView { get; set; }
+
+        public EventsViewModel(Window[] views)
         {
             _dbs = new GXEventService();
+            // Summary of account avail in db
+            _accounts = _dbs.GetAvailableAccounts();
+            // User logged in if there is another account beside default _local account
+            LoggedIn = _accounts.Count > 1;
+
             _cachedEvents = null;
             _lastFilterQuery = "";
             FilterQuery = "";
             RefreshEvents(viewableEventsNum);
+
+            // Init commands
+            Messenger.Base.Register<SaveEventMsg>(this, OnSaveEventReceived);
+            EditEventCommand = new RelayCommand(
+                (object q) => EditEvent(q),
+                (object q) => { return true; }
+            );
             DoWorkCommand = AsyncCommand.Create(DoWork);
             FilterCommand = AsyncCommand.Create(Filter);
+            SwitchAccountCommand = AsyncCommand.Create(SwitchAccount);
+            WideViewCommand = AsyncCommand.Create(WideView);
+
+            // Views for edit and wide view functions
+            editView = views[0];
+            wideView = views[1];
         }
 
         public IAsyncCommand FilterCommand { get; private set; }
@@ -98,7 +126,6 @@ namespace GetMeX.ViewModels.VMs
         public async Task DoWork() // Add new gmail account and sync with db
         {
             var service = new GoogleCalendarService();
-            var accounts = _dbs.GetAvailableAccounts();
             var timeMax = DateTime.Now.AddYears(viewableYearRange);
 
             try
@@ -107,7 +134,7 @@ namespace GetMeX.ViewModels.VMs
                 if (events != null && !events.Items.IsNullOrEmpty())
                 {
                     var email = events.Items[0].Creator.Email;
-                    var foundAcc = accounts.Find(a => a.Email == email);
+                    var foundAcc = _accounts.Find(a => a.Email == email);
                     List<GXEvent> newEvents = null;
                     int targetAccountId = 0;
 
@@ -121,7 +148,7 @@ namespace GetMeX.ViewModels.VMs
                     // New email
                     else
                     {
-                        targetAccountId = accounts.Max(a => a.AccId) + 1;
+                        targetAccountId = _accounts.Max(a => a.AccId) + 1;
                         await _dbs.AddAccount(email);
                         newEvents = events.Items.ToGXEvents(targetAccountId);
                     }
@@ -148,11 +175,51 @@ namespace GetMeX.ViewModels.VMs
             }
         }
 
+        public IAsyncCommand SwitchAccountCommand { get; private set; }
+
+        public Task SwitchAccount() // or "Add account" if not previously logged in
+        {
+            if (LoggedIn)
+            {
+                // Delete current saved oauth token
+                var tokenPath = AppDomain.CurrentDomain.GetData("GoogleCalendarTokenPath").ToString();
+                File.Delete(tokenPath);
+                LoggedIn = false;
+            }
+            // Authenticate and retrieve events
+            RefreshEvents(viewableEventsNum);
+            return Task.CompletedTask;
+        }
+
+        public RelayCommand EditEventCommand { get; private set; }
+
+        private void EditEvent(object eventToEdit)
+        {
+            var eventToSend = (eventToEdit != null) ? (GXEvent)eventToEdit : null;
+            editView.DataContext = new EventEditViewModel();
+            var editViewService = new ViewService(editView);
+            Messenger.Base.Send(eventToSend);
+            editViewService.ShowDialog();
+        }
+
+        private void OnSaveEventReceived(SaveEventMsg m)
+        {
+
+        }
+
+        public IAsyncCommand WideViewCommand { get; private set; }
+
+        public async Task WideView()
+        {
+
+        }
+
         private void RefreshEvents(int limit)
         {
             try
             {
                 Events = _dbs.GetEvents(limit).ToObservableCollection();
+                LoggedIn = true;
             }
             catch (DataException)
             {
