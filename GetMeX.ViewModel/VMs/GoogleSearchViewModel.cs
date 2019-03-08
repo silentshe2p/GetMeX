@@ -68,7 +68,7 @@ namespace GetMeX.ViewModels.VMs
             }
         }
 
-        public ViewService viewService { get; set; }
+        private ViewService viewService { get; set; }
         private List<SearchResult> _results { get; set; }
         private bool _queryUnchanged = true;
         private LanguageCode _langCode = new LanguageCode();
@@ -146,6 +146,11 @@ namespace GetMeX.ViewModels.VMs
         }
 
         public RelayCommand SetQueryCommand { get; private set; }
+
+        public void CloseChildView(bool parentClosing)
+        {
+            viewService.CloseView(parentClosing);
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

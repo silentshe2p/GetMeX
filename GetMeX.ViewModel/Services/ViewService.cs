@@ -4,8 +4,6 @@ namespace GetMeX.ViewModels.Services
 {
     public class ViewService
     {
-        // Whether to hide view instead of closing and creating new each time
-        private bool _maintainView { get; set; }
         // Whether parent view initiated Close()
         private bool _parentClosing { get; set; }
         private Window _view { get; set; }
@@ -13,7 +11,6 @@ namespace GetMeX.ViewModels.Services
         public ViewService(Window w)
         {
             _view = w;
-            _maintainView = false;
             _parentClosing = false;
             _view.Closing += HideView;
         }
@@ -30,7 +27,6 @@ namespace GetMeX.ViewModels.Services
         {
             if (_view != null)
             {
-                _maintainView = true;
                 _view.Show();
             }
         }
@@ -47,7 +43,7 @@ namespace GetMeX.ViewModels.Services
         private void HideView(object sender, System.ComponentModel.CancelEventArgs e)
         {
             // Hide the view instead of closing to be able to re-open later unless main program (parent) is closing
-            if (_maintainView && !_parentClosing)
+            if (!_parentClosing)
             {
                 e.Cancel = true;
                 _view.Visibility = Visibility.Hidden;

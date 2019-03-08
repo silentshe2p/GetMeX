@@ -52,8 +52,8 @@ namespace GetMeX.ViewModels.VMs
             }
         }
 
-        public Window editView { get; set; }
-        public Window wideView { get; set; }
+        private ViewService editViewService { get; set; }
+        private ViewService wideViewService { get; set; }
 
         public EventsViewModel(Window[] views)
         {
@@ -80,8 +80,8 @@ namespace GetMeX.ViewModels.VMs
             WideViewCommand = AsyncCommand.Create(WideView);
 
             // Views for edit and wide view functions
-            editView = views[0];
-            wideView = views[1];
+            editViewService = new ViewService(views[0]);
+            wideViewService = new ViewService(views[1]);
         }
 
         public IAsyncCommand FilterCommand { get; private set; }
@@ -196,8 +196,6 @@ namespace GetMeX.ViewModels.VMs
         private void EditEvent(object eventToEdit)
         {
             var eventToSend = (eventToEdit != null) ? (GXEvent)eventToEdit : null;
-            editView.DataContext = new EventEditViewModel();
-            var editViewService = new ViewService(editView);
             Messenger.Base.Send(eventToSend);
             editViewService.ShowDialog();
         }
@@ -225,6 +223,12 @@ namespace GetMeX.ViewModels.VMs
             {
                 throw new DataException("Failed to retrieve events from database. Verify the connection and try again");
             }
+        }
+
+        public void CloseChildView(bool parentClosing)
+        {
+            editViewService.CloseView(parentClosing);
+            wideViewService.CloseView(parentClosing);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

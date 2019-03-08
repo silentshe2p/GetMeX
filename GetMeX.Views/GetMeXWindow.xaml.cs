@@ -21,7 +21,8 @@ namespace GetMeX.Views
 		private static GoogleSearchViewModel _gsVM = new GoogleSearchViewModel(_gsView);
 
         // Event function vms
-        private static EventEditWindow _eeView = new EventEditWindow();
+        private static EventEditViewModel _eeVM = new EventEditViewModel();
+        private static EventEditWindow _eeView = new EventEditWindow(_eeVM);
         private static Window[] eventWindows = new Window[] { _eeView, _eeView };
         private static EventsViewModel _eVM = new EventsViewModel(eventWindows);
 
@@ -72,7 +73,9 @@ namespace GetMeX.Views
 		/// Close open or hidden child windows
 		private void ChildWindowCleanup(object sender, System.ComponentModel.CancelEventArgs e)
 		{
-			_gsVM.viewService.CloseView(parentClosing:true);
-		}
+			_gsVM.CloseChildView(parentClosing:true);
+            _eVM.CloseChildView(parentClosing:true);
+
+        }
 	}
 }

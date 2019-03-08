@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
 using GetMeX.DAL;
 using GetMeX.Models;
 using GetMeX.ViewModels.Commands;
@@ -13,10 +15,53 @@ namespace GetMeX.ViewModels.VMs
     public class EventEditViewModel : INotifyPropertyChanged, IViewModel
     {
         private GXEventService _dbs;
-        public string ActionName { get; set; }
-        public string Account { get; set; }
-        public string ErrorMsg { get; set; }
-        public bool EventValidated { get; set; }
+        private GXEvent _originalEvent;
+
+        public List<string> ColorList { get; private set; }
+
+        private bool _eventModified;
+        public bool EventModified
+        {
+            get { return _eventModified; }
+            set
+            {
+                _eventModified = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _error;
+        public string Error
+        {
+            get { return _error; }
+            set
+            {
+                _error = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _actionName;
+        public string ActionName
+        {
+            get { return _actionName; }
+            set
+            {
+                _actionName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _account;
+        public string Account
+        {
+            get { return _account; }
+            set
+            {
+                _account = value;
+                OnPropertyChanged();
+            }
+        }
 
         private bool _saveOnline;
         public bool SaveOnline
@@ -43,75 +88,94 @@ namespace GetMeX.ViewModels.VMs
         public EventEditViewModel()
         {
             _dbs = new GXEventService();
-            Event = CreateDefaultEvent();
-            SaveOnline = false;
-            ActionName = "Create event";
-            Account = "Local";
-            ErrorMsg = null;
-            EventValidated = false;
+            ColorIdHex colors = new ColorIdHex();
+            ColorList = colors.GetColors();
+            InitModel();
 
             // Init messenger and command
-            Messenger.Base.Register<EditEventMsg>(this, OnEventToEditReceived);
-            ValidateCommand = new RelayCommand(
-                (object q) => ValidateEvent(q),
+            Messenger.Base.Register<GXEvent>(this, OnEventToEditReceived);
+            CheckEventModifiedCommand = new RelayCommand(
+                (object q) => EventModified = true,
+                (object q) => { return true; }
+            );
+            CloseWindowCommand = new RelayCommand(
+                (object q) => { ((Window)q).Close(); },
                 (object q) => { return true; }
             );
             DoWorkCommand = AsyncCommand.Create(DoWork);
         }
+        
+        public RelayCommand CheckEventModifiedCommand { get; private set; }
 
-        public RelayCommand ValidateCommand { get; private set; }
+        public RelayCommand CloseWindowCommand { get; private set; }
 
         public IAsyncCommand DoWorkCommand { get; private set; }
 
         public Task DoWork() // Save current event
         {
-            Messenger.Base.Send(new SaveEventMsg {
-                SaveOnline = SaveOnline,
-                Event = Event
-            });
+            if (EventValidated())
+            {
+                Messenger.Base.Send(new SaveEventMsg
+                {
+                    SaveOnline = SaveOnline,
+                    Event = Event
+                });
+                _originalEvent = Event;
+            }
+            EventModified = false;
             return Task.CompletedTask;
         }
 
-        private void OnEventToEditReceived(EditEventMsg m)
+        private void OnEventToEditReceived(GXEvent ev)
         {
-            if (m.Event != null)
+            if (ev != null)
             {
-                Event = m.Event;
+                _originalEvent = ev;
+                Event = new GXEvent(ev);
                 ActionName = "Edit event";
-                if (!m.Gmail.IsNullOrEmpty())
+                if (ev.Account.Gmail.Contains("@gmail.com"))
                 {
-                    Account = m.Gmail;
+                    Account = ev.Account.Gmail;
                     SaveOnline = true;
                 }
             }
         }
 
-        private GXEvent CreateDefaultEvent()
+        public void InitModel()
         {
-            return new GXEvent
+            _originalEvent = null;
+            Event = new GXEvent
             {
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddDays(1),
                 ColorId = 1
             };
+            SaveOnline = false;
+            ActionName = "Create event";
+            Account = "Local";
+            Error = null;
+            EventModified = false;
         }
 
-        private void ValidateEvent(object q)
+        private bool EventValidated()
         {
             if (Event.Summary.IsNullOrEmpty())
             {
-                ErrorMsg = "Event summary can't be empty";
+                Error = "Event summary can't be empty";
             }
             else if (Event.StartDate > Event.EndDate)
             {
-                ErrorMsg = "Start datetime can't be latter than end datetime";
+                Error = "Start datetime can't be latter than end datetime";
+            }
+            else if (Event.Equals(_originalEvent))
+            {
+                Error = "No changes detected for event";
             }
             else
             {
-                EventValidated = true;
-                return;
+                Error = null;
             }
-            EventValidated = false;
+            return Error == null;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

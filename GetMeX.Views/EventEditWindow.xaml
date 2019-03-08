@@ -5,17 +5,23 @@
 		xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:ult="clr-namespace:GetMeX.ViewModels.Utilities;assembly=GetMeX.ViewModels"
-		mc:Ignorable="d" Height="300" Width="400"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
+		mc:Ignorable="d" Height="450" Width="600"
 		Title="{Binding ActionName}"
 		Background="{DynamicResource MaterialDesignPaper}"
 		TextElement.Foreground="{DynamicResource MaterialDesignBody}">
 
     <Window.Resources>
         <ult:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        <ult:ColorIdToHexConverter x:Key="ColorIdToHexConverter"/>
     </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
@@ -40,37 +46,135 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Text="{Binding Account}" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="6"/>
+        <!-- Account information -->
+        <Viewbox Grid.Row="1" MaxHeight="25" VerticalAlignment="Top"
+                        Grid.Column="2" Grid.ColumnSpan="6">
+            <wpf:Card Content="{Binding Account, Mode=OneWay}" Background="Orange"/>
+        </Viewbox>
+
+        <!-- Event ummary (required) -->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                            Grid.Row="2"  Grid.Column="1" Grid.ColumnSpan="2">
+            <TextBlock Text="Summary" 
+                            Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+            <fa:ImageAwesome Icon="Asterisk" Foreground="PaleVioletRed"
+                            MaxHeight="10" MaxWidth="10"/>
+        </StackPanel>
+
+        <TextBox Text="{Binding Event.Summary}" VerticalAlignment="Center"
+                        FontSize="18" KeyUp="TextBox_CheckEventModified"
+                        Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="6"
+                        Style="{DynamicResource MaterialDesignTextBox}"/>
+
+        <!-- Event start datetime (required) -->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                            Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2">
+            <TextBlock Text="From"
+                            Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+            <fa:ImageAwesome Icon="Asterisk" Foreground="PaleVioletRed"
+                            MaxHeight="10" MaxWidth="10"/>
+        </StackPanel>
+        <DatePicker Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="4"
+                            BorderThickness="0" VerticalAlignment="Center"
+                            SelectedDate="{Binding Event.StartDate}">
+            <DatePicker.Resources>
+                <Style TargetType="DatePickerTextBox">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <TextBox Text="{Binding Path=SelectedDate,
+                                                                        RelativeSource={RelativeSource AncestorType=DatePicker},
+                                                                        StringFormat={}{0:MM/dd/yyyy hh:mm:ss}}"
+                                                FontSize="16" KeyUp="TextBox_CheckEventModified"
+                                                Style="{DynamicResource MaterialDesignTextBox}"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DatePicker.Resources>
+        </DatePicker>
+
+        <!-- Event end datetime (required) -->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                            Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2">
+            <TextBlock Text="Until"
+                            Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+            <fa:ImageAwesome Icon="Asterisk" Foreground="PaleVioletRed"
+                            MaxHeight="10" MaxWidth="10"/>
+        </StackPanel>
+
+        <DatePicker Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="4"
+                            BorderThickness="0" VerticalAlignment="Center"
+                            SelectedDate="{Binding Event.EndDate}">
+            <DatePicker.Resources>
+                <Style TargetType="DatePickerTextBox">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <TextBox Text="{Binding Path=SelectedDate,
+                                                                        RelativeSource={RelativeSource AncestorType=DatePicker},
+                                                                        StringFormat={}{0:MM/dd/yyyy hh:mm:ss}}"
+                                                FontSize="16" KeyUp="TextBox_CheckEventModified"
+                                                Style="{DynamicResource MaterialDesignTextBox}"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DatePicker.Resources>
+        </DatePicker>
+
+        <!-- Event description -->
+        <TextBlock Text="Description" VerticalAlignment="Center"
+                        Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2"
+                        Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+        <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto"
+                        Grid.Row="7" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="6">
+            <TextBox Text="{Binding Event.Description}"
+                        Background="Transparent" TextWrapping="Wrap"
+                        KeyUp="TextBox_CheckEventModified"
+                        MaxWidth="{Binding Path=ActualWidth,
+                                                          RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
+                        FontSize="16" FontFamily="Helvetica"/>
+        </ScrollViewer>
+
+        <!-- Event color selection -->
+        <TextBlock Text="Color" Grid.Row="9" VerticalAlignment="Center"
+                        Grid.Column="1" Grid.ColumnSpan="2"
+                        Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+        <ComboBox ItemsSource="{Binding ColorList}" Grid.Row="9" Grid.Column="3"
+                            SelectedValue="{Binding Event.ColorId, Converter={StaticResource ColorIdToHexConverter}}"
+                            Style="{DynamicResource MaterialDesignComboBox}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <fa:ImageAwesome Icon="Square" Foreground="{Binding}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <!--<TextBox Text="{Binding Event.Color}" Grid.Row="9" Grid.Column="3" Grid.ColumnSpan="4"/>-->
+
+        <!-- Event invalid error -->
+        <StackPanel Visibility="{Binding Error, Converter={StaticResource NullToVisibilityConverter}}"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Orientation="Horizontal" Grid.Row="10" Grid.ColumnSpan="8">
+            <fa:ImageAwesome Icon="Warning" Margin="0 0 14 0"
+                            MaxHeight="14" MaxWidth="14" Foreground="IndianRed"/>
+            <TextBlock Text="{Binding Error}" FontSize="14" Foreground="Red"/>
+        </StackPanel>
         
-        <TextBlock Text="Summary" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
-        <TextBox Text="{Binding Event.Summary}" Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="4"/>
-
-        <TextBlock Text="From" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"/>
-        <TextBox Text="{Binding Event.StartDate}" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="4"/>
-
-        <TextBlock Text="Until" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"/>
-        <TextBox Text="{Binding Event.EndDate}" Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="4"/>
-
-        <TextBlock Text="Description" Grid.Row="4" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="2"/>
-        <TextBox Text="{Binding Event.Description}" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="4"/>
-
-        <TextBlock Text="Color" Grid.Row="6" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="2"/>
-        <TextBox Text="{Binding Event.Color}" Grid.Row="6" Grid.Column="4" Grid.ColumnSpan="4"/>
-
-        <TextBlock Text="{Binding ErrorMsg}" Grid.Row="8" Grid.ColumnSpan="6"/>
-
         <!-- Save button -->
-        <Button Name="SaveButton"  Content="Save"
-                Grid.Row="9" Grid.Column="3"
-				IsEnabled="{Binding EventValidated}"
+        <Button Name="SaveButton"  Content="Save" MinWidth="100"
+                Grid.Row="11" Grid.Column="2" Grid.ColumnSpan="2"
 				VerticalAlignment="Top" HorizontalAlignment="Right"
-				Margin="0 0 80 0" Command="{Binding DoWorkCommand}" 
-				Style="{DynamicResource MaterialDesignFlatButton}"/>
+				Command="{Binding DoWorkCommand}" IsEnabled="{Binding EventModified}"
+				Style="{DynamicResource MaterialDesignRaisedAccentButton}"/>
+        
         <!-- Cancel button -->
-        <Button Name="CancelButton" Content="Cancel"
-				Grid.Row="9" Grid.Column="6"
+        <Button Name="CancelButton" Content="Cancel" MinWidth="100"
+				Grid.Row="11" Grid.Column="5" Grid.ColumnSpan="2"
 				VerticalAlignment="Top" HorizontalAlignment="Right"
-				Command="{Binding}"
-				Style="{DynamicResource MaterialDesignFlatButton}"/>
+				Command="{Binding CloseWindowCommand}" 
+                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, 
+                                                                AncestorType={x:Type Window}}}"
+				Style="{DynamicResource MaterialDesignRaisedLightButton}"/>
     </Grid>
 </Window>

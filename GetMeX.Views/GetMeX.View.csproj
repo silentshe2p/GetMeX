@@ -117,6 +117,7 @@
     <Compile Include="SearchResultWindow.xaml.cs">
       <DependentUpon>SearchResultWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Templates\EventTemplate.cs" />
     <Compile Include="Templates\GoogleSearchTemplate.cs" />
     <Compile Include="Templates\J1Template.cs" />
     <Compile Include="Templates\WeatherTemplate.cs" />

@@ -123,6 +123,7 @@
     <Compile Include="Services\ImageRetrieverService.cs" />
     <Compile Include="Services\IViewService.cs" />
     <Compile Include="Services\ViewService.cs" />
+    <Compile Include="Utilities\ColorIdToHexConverter.cs" />
     <Compile Include="Utilities\ExtensionMethods.cs" />
     <Compile Include="Utilities\Helper.cs" />
     <Compile Include="Utilities\Messages\EditEventMsg.cs" />
@@ -131,7 +132,6 @@
     <Compile Include="Utilities\Messages\OldQueryMsg.cs" />
     <Compile Include="Utilities\Messages\FetchResultsMsg.cs" />
     <Compile Include="Utilities\Messages\SaveEventMsg.cs" />
-    <Compile Include="Utilities\Messages\UpdateViewMsg.cs" />
     <Compile Include="Utilities\Messenger.cs" />
     <Compile Include="Utilities\NullToVisibilityConverter.cs" />
     <Compile Include="Utilities\CountConverter.cs" />

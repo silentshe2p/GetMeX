@@ -4,7 +4,8 @@
 	xmlns:vms="clr-namespace:GetMeX.ViewModels.VMs;assembly=GetMeX.ViewModels"
     xmlns:ult="clr-namespace:GetMeX.ViewModels.Utilities;assembly=GetMeX.ViewModels"
     xmlns:fa="http://schemas.fontawesome.io/icons/"
-    xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes">
+    xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
+    x:Class="GetMeX.Templates.EventTemplate">
 
     <ult:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -79,7 +80,7 @@
 
             <!--Events display-->
             <ListBox Grid.Row="2" Grid.RowSpan="10" Grid.ColumnSpan="10"
-                    VerticalAlignment="Top"
+                    VerticalAlignment="Top" MouseDoubleClick="DoubleClick_EditEvent"
                     BorderThickness="0" Background="Transparent" 
                     ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                     ItemsSource="{Binding Events}"
