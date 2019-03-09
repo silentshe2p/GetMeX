@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using GetMeX.Models;
 using GetMeX.ViewModels.Services;
 using GetMeX.ViewModels.Utilities;
-using GetMeX.ViewModels.Utilities.Messages;
 
 namespace GetMeX.ViewModels.VMs
 {

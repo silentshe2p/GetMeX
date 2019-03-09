@@ -1,4 +1,4 @@
-﻿namespace GetMeX.ViewModels.Utilities.Messages
+﻿namespace GetMeX.ViewModels.Utilities
 {
     public class NewQueryMsg
     {

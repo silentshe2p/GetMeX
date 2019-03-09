@@ -108,5 +108,17 @@ namespace GetMeX.ViewModels.Services
             EventsResource.DeleteRequest req = calService.Events.Delete(calendar, eventId);
             await req.ExecuteAsync();
         }
+
+        public async Task UpdateEvent(Event e, string calendar = "primary")
+        {
+            if (calService == null || !editable)
+            {
+                await Auth(EditScopes);
+                editable = true;
+            }
+
+            EventsResource.UpdateRequest req = calService.Events.Update(e, e.Id, calendar);
+            await req.ExecuteAsync();
+        }
     }
 }

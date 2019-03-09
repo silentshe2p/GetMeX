@@ -13,7 +13,6 @@ using GetMeX.DAL;
 using GetMeX.ViewModels.Commands;
 using GetMeX.ViewModels.Services;
 using GetMeX.ViewModels.Utilities;
-using GetMeX.ViewModels.Utilities.Messages;
 
 namespace GetMeX.ViewModels.VMs
 {
@@ -68,8 +67,8 @@ namespace GetMeX.ViewModels.VMs
             FilterQuery = "";
             RefreshEvents(viewableEventsNum);
 
-            // Init commands
-            Messenger.Base.Register<SaveEventMsg>(this, OnSaveEventReceived);
+            // Init commands and messenger
+            Messenger.Base.Register<ModifyEventMsg>(this, OnModifyEventReceived);
             EditEventCommand = new RelayCommand(
                 (object q) => EditEvent(q),
                 (object q) => { return true; }
@@ -113,7 +112,7 @@ namespace GetMeX.ViewModels.VMs
                     throw new DataException("Failed to modify database. Verify the connection and try again");
                 }
             }
-            else
+            else if (_cachedEvents != null)
             {
                 Events = _cachedEvents;
             }
@@ -200,9 +199,51 @@ namespace GetMeX.ViewModels.VMs
             editViewService.ShowDialog();
         }
 
-        private void OnSaveEventReceived(SaveEventMsg m)
+        // Save received event (already validated by edit view model) to db
+        // If SaveEventMsg.SaveChangeOnline true, then also save event to / delete event from google calendar 
+        private async void OnModifyEventReceived(ModifyEventMsg m)
         {
+            var eventToModify = m.Event;
+            var service = new GoogleCalendarService();
 
+            try
+            {
+                // Modify local db and possiblely google calendar based on action
+                switch (m.Action)
+                {
+                    case EventModifyAction.Add:
+                        await _dbs.AddEvent(eventToModify, eventToModify.AID);
+                        if (m.SaveChangeOnline)
+                        {
+                            await service.AddEvent(eventToModify.ToEvent());
+                        }
+                        break;
+                    case EventModifyAction.Update:
+                        await _dbs.UpdateEvent(eventToModify, eventToModify.EID);
+                        if (m.SaveChangeOnline)
+                        {
+                            await service.UpdateEvent(eventToModify.ToEvent());
+                        }
+                        break;
+                    case EventModifyAction.Delete:
+                        _dbs.DeleteEvent(eventToModify.EID);
+                        if (m.SaveChangeOnline)
+                        {
+                            await service.DeleteEvent(eventToModify.GID);
+                        }
+                        break;
+                    default:
+                        SendModifyEventStatus(success: false, msg: "Unknown action received");
+                        return;
+                }
+            }
+            catch (DataException ex)
+            {
+                SendModifyEventStatus(success: false, msg: ex.Message);
+                return;
+            }
+            SendModifyEventStatus(success: true, deleted: m.Action == EventModifyAction.Delete);
+            RefreshEvents(viewableEventsNum);
         }
 
         public IAsyncCommand WideViewCommand { get; private set; }
@@ -223,6 +264,16 @@ namespace GetMeX.ViewModels.VMs
             {
                 throw new DataException("Failed to retrieve events from database. Verify the connection and try again");
             }
+        }
+
+        private void SendModifyEventStatus(bool success = true, bool deleted = false, string msg = null)
+        {
+            Messenger.Base.Send(new ModifyEventStatusMsg
+            {
+                Success = success,
+                Deleted = deleted,
+                Error = msg
+            });
         }
 
         public void CloseChildView(bool parentClosing)

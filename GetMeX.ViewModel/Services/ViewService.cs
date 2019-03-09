@@ -19,6 +19,7 @@ namespace GetMeX.ViewModels.Services
         {
             if (_view != null)
             {
+                SetOwner();
                 _view.ShowDialog();
             }
         }
@@ -27,6 +28,7 @@ namespace GetMeX.ViewModels.Services
         {
             if (_view != null)
             {
+                SetOwner();
                 _view.Show();
             }
         }
@@ -47,6 +49,14 @@ namespace GetMeX.ViewModels.Services
             {
                 e.Cancel = true;
                 _view.Visibility = Visibility.Hidden;
+            }
+        }
+
+        private void SetOwner() // Alt-tab will show both main and child window
+        {
+            if (_view.Owner == null)
+            {
+                _view.Owner = Application.Current.MainWindow;
             }
         }
     }

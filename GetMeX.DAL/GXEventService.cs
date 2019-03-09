@@ -63,7 +63,7 @@ namespace GetMeX.DAL
         public List<GXEvent> GetEvents(int limit = 0)
         {
             var query = GetAllNoDuplicate(_db.GXEvents)
-                                    .Where(e => e.StartDate >= DateTime.Now)
+                                    .Where(e => e.StartDate >= DateTime.Today)
                                     .OrderBy(e => e.StartDate);
 
             return (limit > 0) ? query.Take(limit).ToList()
@@ -72,7 +72,7 @@ namespace GetMeX.DAL
 
         public List<GXEvent> GetEvents(string searchQuery, int limit = 0)
         {
-            var query = GetAllNoDuplicate(_db.GXEvents).Where(e => e.StartDate >= DateTime.Now);
+            var query = GetAllNoDuplicate(_db.GXEvents).Where(e => e.StartDate >= DateTime.Today);
             DateTime dt;
 
             // Datetime query -> search for event with the same start date
@@ -107,6 +107,14 @@ namespace GetMeX.DAL
             return localEvents.Union(eventsBothLocalAndOnline);
         }
 
+        public async Task AddEvent(GXEvent ev, int accId)
+        {
+            var account = _db.Accounts.Find(accId);
+            account.GXEvents.Add(ev);
+            _db.GXEvents.Add(ev);
+            await _db.SaveChangesAsync();
+        }
+
         public async Task AddEvents(List<GXEvent> events, int accId)
         {
             var account = _db.Accounts.Find(accId);
@@ -118,20 +126,29 @@ namespace GetMeX.DAL
             await _db.SaveChangesAsync();
         }
 
-        public async Task EditEvent(int id, GXEvent newEvent)
+        public async Task UpdateEvent(GXEvent newEvent, int id)
         {
-            var eventToEdit = _db.GXEvents.Find(id);
-            if (eventToEdit != null)
+            var eventToUpdate = _db.GXEvents.Find(id);
+            if (eventToUpdate != null)
             {
-                eventToEdit = newEvent;
+                eventToUpdate.Summary = newEvent.Summary;
+                eventToUpdate.StartDate = newEvent.StartDate;
+                eventToUpdate.EndDate = newEvent.EndDate;
+                eventToUpdate.Location = newEvent.Location;
+                eventToUpdate.Description = newEvent.Description;
+                eventToUpdate.ColorId = newEvent.ColorId;
                 await _db.SaveChangesAsync();
             }
         }
 
         public void DeleteEvent(int id)
         {
-            var eventToDelete = new GXEvent() { EID = id };
-            _db.Entry(eventToDelete).State = EntityState.Deleted;
+            var eventToDelete = _db.GXEvents.FirstOrDefault(e => e.EID == id);
+            if (eventToDelete != null)
+            {
+                _db.GXEvents.Remove(eventToDelete);
+            }
+            _db.SaveChanges();
         }
         ////////////////////////////////////////////////////////////
     }

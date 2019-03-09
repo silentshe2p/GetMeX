@@ -86,6 +86,7 @@
     </Compile>
     <Compile Include="AccountDetail.cs" />
     <Compile Include="ColorIdHex.cs" />
+    <Compile Include="EventModifyAction.cs" />
     <Compile Include="Features.cs" />
     <Compile Include="GoogleSuggestion.cs" />
     <Compile Include="GXEvent.cs">

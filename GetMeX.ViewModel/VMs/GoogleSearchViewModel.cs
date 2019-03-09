@@ -8,7 +8,6 @@ using GetMeX.ViewModels.Commands;
 using GetMeX.ViewModels.Exceptions;
 using GetMeX.ViewModels.Services;
 using GetMeX.ViewModels.Utilities;
-using GetMeX.ViewModels.Utilities.Messages;
 
 namespace GetMeX.ViewModels.VMs
 {

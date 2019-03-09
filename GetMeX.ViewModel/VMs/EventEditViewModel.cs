@@ -8,7 +8,6 @@ using GetMeX.DAL;
 using GetMeX.Models;
 using GetMeX.ViewModels.Commands;
 using GetMeX.ViewModels.Utilities;
-using GetMeX.ViewModels.Utilities.Messages;
 
 namespace GetMeX.ViewModels.VMs
 {
@@ -30,13 +29,13 @@ namespace GetMeX.ViewModels.VMs
             }
         }
 
-        private string _error;
-        public string Error
+        private ModifyEventStatusMsg _status;
+        public ModifyEventStatusMsg Status
         {
-            get { return _error; }
+            get { return _status; }
             set
             {
-                _error = value;
+                _status = value;
                 OnPropertyChanged();
             }
         }
@@ -63,13 +62,13 @@ namespace GetMeX.ViewModels.VMs
             }
         }
 
-        private bool _saveOnline;
-        public bool SaveOnline
+        private bool _saveChangeOnline;
+        public bool SaveChangeOnline
         {
-            get { return _saveOnline; }
+            get { return _saveChangeOnline; }
             set
             {
-                _saveOnline = value;
+                _saveChangeOnline = value;
                 OnPropertyChanged();
             }
         }
@@ -94,15 +93,17 @@ namespace GetMeX.ViewModels.VMs
 
             // Init messenger and command
             Messenger.Base.Register<GXEvent>(this, OnEventToEditReceived);
+            Messenger.Base.Register<ModifyEventStatusMsg>(this, OnModifyStatusReceived);
             CheckEventModifiedCommand = new RelayCommand(
                 (object q) => EventModified = true,
-                (object q) => { return true; }
+                (object q) => { return !Event.Equals(_originalEvent); }
             );
             CloseWindowCommand = new RelayCommand(
                 (object q) => { ((Window)q).Close(); },
                 (object q) => { return true; }
             );
             DoWorkCommand = AsyncCommand.Create(DoWork);
+            DeleteEventCommand = AsyncCommand.Create(DeleteEvent);
         }
         
         public RelayCommand CheckEventModifiedCommand { get; private set; }
@@ -111,19 +112,37 @@ namespace GetMeX.ViewModels.VMs
 
         public IAsyncCommand DoWorkCommand { get; private set; }
 
-        public Task DoWork() // Save current event
+        public Task DoWork() // Add/save current event
         {
             if (EventValidated())
             {
-                Messenger.Base.Send(new SaveEventMsg
-                {
-                    SaveOnline = SaveOnline,
-                    Event = Event
-                });
-                _originalEvent = Event;
+                var action = (Event.EID == 0) ? EventModifyAction.Add
+                                                                : EventModifyAction.Update;
+                SendModifyEventMsg(action);
             }
-            EventModified = false;
             return Task.CompletedTask;
+        }
+
+        public IAsyncCommand DeleteEventCommand { get; private set; }
+
+        public Task DeleteEvent()
+        {
+            if (Event.Equals(_originalEvent))
+            {
+                SendModifyEventMsg(EventModifyAction.Delete);
+            }
+            return Task.CompletedTask;
+        }
+
+        private void SendModifyEventMsg(EventModifyAction action)
+        {
+            Messenger.Base.Send(new ModifyEventMsg
+            {
+                Action = action,
+                SaveChangeOnline = SaveChangeOnline,
+                Event = Event
+            });
+            _originalEvent = Event;
         }
 
         private void OnEventToEditReceived(GXEvent ev)
@@ -136,9 +155,19 @@ namespace GetMeX.ViewModels.VMs
                 if (ev.Account.Gmail.Contains("@gmail.com"))
                 {
                     Account = ev.Account.Gmail;
-                    SaveOnline = true;
+                    SaveChangeOnline = true;
                 }
             }
+        }
+
+        private void OnModifyStatusReceived(ModifyEventStatusMsg m)
+        {
+            if (m.Deleted)
+            {
+                InitModel();
+            }
+            EventModified = false;
+            Status = m;
         }
 
         public void InitModel()
@@ -146,14 +175,19 @@ namespace GetMeX.ViewModels.VMs
             _originalEvent = null;
             Event = new GXEvent
             {
+                AID = 1,
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddDays(1),
                 ColorId = 1
             };
-            SaveOnline = false;
+            SaveChangeOnline = false;
             ActionName = "Create event";
             Account = "Local";
-            Error = null;
+            Status = new ModifyEventStatusMsg {
+                Success = false,
+                Deleted = false,
+                Error = null
+            };
             EventModified = false;
         }
 
@@ -161,21 +195,21 @@ namespace GetMeX.ViewModels.VMs
         {
             if (Event.Summary.IsNullOrEmpty())
             {
-                Error = "Event summary can't be empty";
+                Status.Error = "Event summary can't be empty";
             }
             else if (Event.StartDate > Event.EndDate)
             {
-                Error = "Start datetime can't be latter than end datetime";
+                Status.Error = "Start datetime can't be latter than end datetime";
             }
             else if (Event.Equals(_originalEvent))
             {
-                Error = "No changes detected for event";
+                Status.Error = "No changes detected for event";
             }
             else
             {
-                Error = null;
+                Status.Error = null;
             }
-            return Error == null;
+            return Status.Error == null;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

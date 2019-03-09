@@ -1,4 +1,4 @@
-﻿namespace GetMeX.ViewModels.Utilities.Messages
+﻿namespace GetMeX.ViewModels
 {
     public class FetchResultsMsg
     {
