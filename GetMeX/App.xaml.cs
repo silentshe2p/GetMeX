@@ -17,6 +17,7 @@ namespace GetMeX
         protected override void OnStartup(StartupEventArgs e)
 		{
 			base.OnStartup(e);
+            SetDirectoryVariables();
             AppDomain.CurrentDomain.UnhandledException += AppDomainExceptionHandler;
 			ComposeObject();
 			Current.MainWindow.Show();

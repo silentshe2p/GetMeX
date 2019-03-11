@@ -137,6 +137,8 @@
     <Compile Include="Utilities\ModifyEventStatusToVisibilityConverter.cs" />
     <Compile Include="Utilities\NullToVisibilityConverter.cs" />
     <Compile Include="Utilities\CountConverter.cs" />
+    <Compile Include="Utilities\ReversedBooleanConverter.cs" />
+    <Compile Include="Utilities\SaveChangeOnlineVisibilityConverter.cs" />
     <Compile Include="Utilities\StatusToForegroundConverter.cs" />
     <Compile Include="Utilities\StatusToIconConverter.cs" />
     <Compile Include="Utilities\StatusToTextConverter.cs" />

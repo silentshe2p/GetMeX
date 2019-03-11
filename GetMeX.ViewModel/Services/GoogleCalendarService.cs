@@ -25,7 +25,6 @@ namespace GetMeX.ViewModels.Services
         {
             credential = null;
             calService = null;
-            editable = false;
         }
 
         private async Task Auth(string[] scopes)
@@ -61,7 +60,7 @@ namespace GetMeX.ViewModels.Services
         {
             if (calService == null)
             {
-                await Auth(ViewScopes);
+                await Auth(EditScopes);
             }
 
             EventsResource.ListRequest req = calService.Events.List(calendar);
@@ -77,7 +76,7 @@ namespace GetMeX.ViewModels.Services
         {
             if (calService == null)
             {
-                await Auth(ViewScopes);
+                await Auth(EditScopes);
             }
 
             EventsResource.GetRequest req = calService.Events.Get(calendar, eventId);
@@ -86,10 +85,9 @@ namespace GetMeX.ViewModels.Services
 
         public async Task<string> AddEvent(Event e, string calendar="primary")
         {
-            if (calService == null || !editable)
+            if (calService == null)
             {
                 await Auth(EditScopes);
-                editable = true;
             }
 
             EventsResource.InsertRequest req = calService.Events.Insert(e, calendar);
@@ -99,10 +97,9 @@ namespace GetMeX.ViewModels.Services
 
         public async Task DeleteEvent(string eventId, string calendar="primary")
         {
-            if (calService == null || !editable)
+            if (calService == null)
             {
                 await Auth(EditScopes);
-                editable = true;
             }
 
             EventsResource.DeleteRequest req = calService.Events.Delete(calendar, eventId);
@@ -111,13 +108,12 @@ namespace GetMeX.ViewModels.Services
 
         public async Task UpdateEvent(Event e, string calendar = "primary")
         {
-            if (calService == null || !editable)
+            if (calService == null)
             {
                 await Auth(EditScopes);
-                editable = true;
             }
 
-            EventsResource.UpdateRequest req = calService.Events.Update(e, e.Id, calendar);
+            EventsResource.UpdateRequest req = calService.Events.Update(e, calendar, e.Id);
             await req.ExecuteAsync();
         }
     }

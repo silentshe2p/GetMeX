@@ -95,8 +95,8 @@ namespace GetMeX.ViewModels.VMs
             Messenger.Base.Register<GXEvent>(this, OnEventToEditReceived);
             Messenger.Base.Register<ModifyEventStatusMsg>(this, OnModifyStatusReceived);
             CheckEventModifiedCommand = new RelayCommand(
-                (object q) => EventModified = true,
-                (object q) => { return !Event.Equals(_originalEvent); }
+                (object q) => EventModified = !Event.Equals(_originalEvent),
+                (object q) => { return true; }
             );
             CloseWindowCommand = new RelayCommand(
                 (object q) => { ((Window)q).Close(); },
@@ -142,15 +142,15 @@ namespace GetMeX.ViewModels.VMs
                 SaveChangeOnline = SaveChangeOnline,
                 Event = Event
             });
-            _originalEvent = Event;
+            _originalEvent = new GXEvent(Event);
         }
 
         private void OnEventToEditReceived(GXEvent ev)
         {
             if (ev != null)
             {
-                _originalEvent = ev;
                 Event = new GXEvent(ev);
+                _originalEvent = new GXEvent(Event);
                 ActionName = "Edit event";
                 if (ev.Account.Gmail.Contains("@gmail.com"))
                 {
@@ -172,7 +172,6 @@ namespace GetMeX.ViewModels.VMs
 
         public void InitModel()
         {
-            _originalEvent = null;
             Event = new GXEvent
             {
                 AID = 1,
@@ -180,6 +179,7 @@ namespace GetMeX.ViewModels.VMs
                 EndDate = DateTime.Now.AddDays(1),
                 ColorId = 1
             };
+            _originalEvent = new GXEvent(Event);
             SaveChangeOnline = false;
             ActionName = "Create event";
             Account = "Local";
@@ -193,22 +193,29 @@ namespace GetMeX.ViewModels.VMs
 
         private bool EventValidated()
         {
+            var status = new ModifyEventStatusMsg
+            {
+                Success = Status.Success,
+                Deleted = Status.Deleted
+            };
+
             if (Event.Summary.IsNullOrEmpty())
             {
-                Status.Error = "Event summary can't be empty";
+                status.Error = "Event summary can't be empty";
             }
             else if (Event.StartDate > Event.EndDate)
             {
-                Status.Error = "Start datetime can't be latter than end datetime";
+                status.Error = "Start datetime can't be latter than end datetime";
             }
             else if (Event.Equals(_originalEvent))
             {
-                Status.Error = "No changes detected for event";
+                status.Error = "No changes detected for event";
             }
             else
             {
-                Status.Error = null;
+                status.Error = null;
             }
+            Status = status;
             return Status.Error == null;
         }
 

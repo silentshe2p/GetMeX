@@ -17,10 +17,10 @@
                       FontSize="20" FontFamily="Georgia"
                       Background="BlanchedAlmond" Foreground="ForestGreen"/>
             <TextBlock/>
-            <TextBlock Text="{Binding StartDate, StringFormat=Fr: {0}}"
+            <TextBlock Text="{Binding StartDate, StringFormat=Fr: {0:MM/dd/yyyy HH:mm:ss}}"
                        FontSize="18"/>
             <TextBlock/>
-            <TextBlock Text="{Binding EndDate, StringFormat=To: {0}}"
+            <TextBlock Text="{Binding EndDate, StringFormat=To: {0:MM/dd/yyyy HH:mm:ss}}"
                        FontSize="14"/>
             <TextBlock/>
             <TextBlock  Visibility="{Binding Location, Converter={StaticResource NullToVisibilityConverter}}" 
@@ -74,7 +74,7 @@
                             BorderThickness="0" Background="Transparent" Margin="2 2 15 2">
                         <fa:ImageAwesome Icon="Search"/>
                     </Button>
-                    <TextBox Text="{Binding FilterQuery}" BorderThickness="0" VerticalAlignment="Center"/>
+                    <TextBox Text="{Binding FilterQuery}" BorderThickness="0" VerticalAlignment="Center" FontSize="16"/>
                 </StackPanel>
             </Border>
 

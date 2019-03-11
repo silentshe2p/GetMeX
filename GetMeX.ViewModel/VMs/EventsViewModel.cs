@@ -126,6 +126,7 @@ namespace GetMeX.ViewModels.VMs
         {
             var service = new GoogleCalendarService();
             var timeMax = DateTime.Now.AddYears(viewableYearRange);
+            _accounts = _dbs.GetAvailableAccounts();
 
             try
             {
@@ -212,25 +213,45 @@ namespace GetMeX.ViewModels.VMs
                 switch (m.Action)
                 {
                     case EventModifyAction.Add:
-                        await _dbs.AddEvent(eventToModify, eventToModify.AID);
-                        if (m.SaveChangeOnline)
+                        string googleCalendarEventId = null;
+                        var targetAccountId = eventToModify.AID;
+                        // Apply changes online first so any failure will prevent changes from being saved locally
+                        if (LoggedIn && m.SaveChangeOnline)
                         {
-                            await service.AddEvent(eventToModify.ToEvent());
+                            googleCalendarEventId = await service.AddEvent(eventToModify.ToEvent());
                         }
+                        // Event was successfully persisted on Google Calendar, update account and id
+                        if (!googleCalendarEventId.IsNullOrEmpty())
+                        {
+                            _accounts = _dbs.GetAvailableAccounts();
+                            var lastSyncAccount = _accounts.Where(a => a.AccId > 1)
+                                                                                .OrderByDescending(a => a.LastSync)
+                                                                                .FirstOrDefault();
+                            if (lastSyncAccount == null)
+                            {
+                                throw new DataException("Couldn't find target Google Calendar account");
+                            }
+                            targetAccountId = lastSyncAccount.AccId;
+                            eventToModify.GID = googleCalendarEventId;
+                        }
+                        // Save changes locally
+                        await _dbs.AddEvent(eventToModify, targetAccountId);
+                        // Switch view to edit just created event
+                        Messenger.Base.Send(eventToModify);
                         break;
                     case EventModifyAction.Update:
-                        await _dbs.UpdateEvent(eventToModify, eventToModify.EID);
-                        if (m.SaveChangeOnline)
+                        if (LoggedIn && m.SaveChangeOnline)
                         {
                             await service.UpdateEvent(eventToModify.ToEvent());
                         }
+                        await _dbs.UpdateEvent(eventToModify, eventToModify.EID);
                         break;
                     case EventModifyAction.Delete:
-                        _dbs.DeleteEvent(eventToModify.EID);
-                        if (m.SaveChangeOnline)
+                        if (LoggedIn && m.SaveChangeOnline)
                         {
                             await service.DeleteEvent(eventToModify.GID);
                         }
+                        _dbs.DeleteEvent(eventToModify.EID);
                         break;
                     default:
                         SendModifyEventStatus(success: false, msg: "Unknown action received");
@@ -240,6 +261,11 @@ namespace GetMeX.ViewModels.VMs
             catch (DataException ex)
             {
                 SendModifyEventStatus(success: false, msg: ex.Message);
+                return;
+            }
+            catch (Google.GoogleApiException ex)
+            {
+                SendModifyEventStatus(success: false, msg: "Unable to apply changes online. If error persists, consider modifying event locally");
                 return;
             }
             SendModifyEventStatus(success: true, deleted: m.Action == EventModifyAction.Delete);

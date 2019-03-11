@@ -67,18 +67,16 @@ namespace GetMeX.ViewModels.Utilities
             DateTimeZone tz = DateTimeZoneProviders.Tzdb.GetSystemDefault();
             return new Event
             {
-                Id = null,
+                Id = e.GID,
                 Location = e.Location,
                 Start = new EventDateTime
                 {
-                    Date = e.StartDate.ToString(),
-                    DateTime = e.StartDateTime.HasValue ? e.StartDateTime.Value.DateTime : (DateTime?)null,
+                    DateTimeRaw = e.StartDate.ToString("yyyy-MM-dd'T'HH:mm:ss"), 
                     TimeZone = tz.ToString()
                 },
                 End = new EventDateTime
                 {
-                    Date = e.EndDate.ToString(),
-                    DateTime = e.EndDateTime.HasValue ? e.EndDateTime.Value.DateTime : (DateTime?)null,
+                    DateTimeRaw = e.EndDate.ToString("yyyy-MM-dd'T'HH:mm:ss"),
                     TimeZone = tz.ToString()
                 },
                 Summary = e.Summary,

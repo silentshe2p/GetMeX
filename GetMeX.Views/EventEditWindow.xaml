@@ -19,7 +19,9 @@
         <ult:StatusToIconConverter x:Key="StatusToIconConverter"/>
         <ult:StatusToForegroundConverter x:Key="StatusToForegroundConverter"/>
         <ult:StatusToTextConverter x:Key="StatusToTextConverter"/>
-        
+        <ult:SaveChangeOnlineVisibilityConverter x:Key="SaveChangeOnlineVisibilityConverter"/>
+        <ult:ReversedBooleanConverter x:Key="ReversedBooleanConverter"/>
+
     </Window.Resources>
 
     <Grid>
@@ -61,14 +63,15 @@
         <!-- Event summary (required) -->
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
                             Grid.Row="2"  Grid.Column="1" Grid.ColumnSpan="2">
-            <TextBlock Text="Summary" 
+            <TextBlock Text="Summary"
                             Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
             <fa:ImageAwesome Icon="Asterisk" Foreground="PaleVioletRed"
                             MaxHeight="10" MaxWidth="10"/>
         </StackPanel>
 
-        <TextBox Text="{Binding Event.Summary}" VerticalAlignment="Center"
-                        FontSize="18" KeyDown="TextBox_CheckEventModified"
+        <TextBox Text="{Binding Event.Summary, UpdateSourceTrigger=PropertyChanged}"
+                        VerticalAlignment="Center"
+                        FontSize="18" KeyUp="TextBox_CheckEventModified"
                         Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="6"
                         Style="{DynamicResource MaterialDesignTextBox}"/>
 
@@ -82,7 +85,7 @@
         </StackPanel>
         <DatePicker Grid.Row="3" Grid.Column="3" Grid.ColumnSpan="4"
                             BorderThickness="0" VerticalAlignment="Center"
-                            SelectedDate="{Binding Event.StartDate}">
+                            SelectedDate="{Binding Event.StartDate, UpdateSourceTrigger=PropertyChanged}">
             <DatePicker.Resources>
                 <Style TargetType="DatePickerTextBox">
                     <Setter Property="Template">
@@ -90,8 +93,9 @@
                             <ControlTemplate>
                                 <TextBox Text="{Binding Path=SelectedDate,
                                                                         RelativeSource={RelativeSource AncestorType=DatePicker},
-                                                                        StringFormat={}{0:MM/dd/yyyy hh:mm:ss}}"
-                                                FontSize="16" KeyDown="TextBox_CheckEventModified"
+                                                                        StringFormat={}{0:MM/dd/yyyy HH:mm:ss}}"
+                                                Name="StartTimeBox"
+                                                FontSize="16" KeyUp="DateTimeBox_CheckEventModified"
                                                 Style="{DynamicResource MaterialDesignTextBox}"/>
                             </ControlTemplate>
                         </Setter.Value>
@@ -111,7 +115,7 @@
 
         <DatePicker Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="4"
                             BorderThickness="0" VerticalAlignment="Center"
-                            SelectedDate="{Binding Event.EndDate}">
+                            SelectedDate="{Binding Event.EndDate, UpdateSourceTrigger=PropertyChanged}">
             <DatePicker.Resources>
                 <Style TargetType="DatePickerTextBox">
                     <Setter Property="Template">
@@ -119,8 +123,9 @@
                             <ControlTemplate>
                                 <TextBox Text="{Binding Path=SelectedDate,
                                                                         RelativeSource={RelativeSource AncestorType=DatePicker},
-                                                                        StringFormat={}{0:MM/dd/yyyy hh:mm:ss}}"
-                                                FontSize="16" KeyDown="TextBox_CheckEventModified"
+                                                                        StringFormat={}{0:MM/dd/yyyy HH:mm:ss}}"
+                                                Name="EndTimeBox"
+                                                FontSize="16" KeyUp="DateTimeBox_CheckEventModified"
                                                 Style="{DynamicResource MaterialDesignTextBox}"/>
                             </ControlTemplate>
                         </Setter.Value>
@@ -134,8 +139,8 @@
                         Grid.Column="1" Grid.ColumnSpan="2"
                         Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
 
-        <TextBox Text="{Binding Event.Location}" VerticalAlignment="Center"
-                        FontSize="16" KeyDown="TextBox_CheckEventModified"
+        <TextBox Text="{Binding Event.Location, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center"
+                        FontSize="16" KeyUp="TextBox_CheckEventModified"
                         Grid.Row="7" Grid.Column="3" Grid.ColumnSpan="6"
                         Style="{DynamicResource MaterialDesignTextBox}"/>
 
@@ -145,9 +150,9 @@
                         Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
         <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto"
                         Grid.Row="8" Grid.RowSpan="2" Grid.Column="3" Grid.ColumnSpan="6">
-            <TextBox Text="{Binding Event.Description}"
+            <TextBox Text="{Binding Event.Description, UpdateSourceTrigger=PropertyChanged}"
                         Background="Transparent" TextWrapping="Wrap"
-                        KeyDown="TextBox_CheckEventModified"
+                        KeyUp="TextBox_CheckEventModified"
                         MaxWidth="{Binding Path=ActualWidth,
                                                           RelativeSource={RelativeSource AncestorType=ScrollViewer}}"
                         FontSize="16" FontFamily="Helvetica"/>
@@ -167,17 +172,30 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
 
+        <!--Save online checkbox-->
+        <CheckBox Visibility="{Binding Event, Converter={StaticResource SaveChangeOnlineVisibilityConverter}}"
+                            Grid.Row="10" Grid.Column="5" Grid.ColumnSpan="4"
+                            VerticalAlignment="Center" IsChecked="{Binding SaveChangeOnline}">
+            <TextBlock Text="Apply changes to Calendar" 
+                            Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+        </CheckBox>
+
         <!-- Status -->
-        <StackPanel Visibility="{Binding Status, Converter={StaticResource ModifyEventStatusToVisibilityConverter}, UpdateSourceTrigger=PropertyChanged}"
+        <StackPanel Visibility="{Binding Status, Converter={StaticResource ModifyEventStatusToVisibilityConverter}}"
                             HorizontalAlignment="Center" VerticalAlignment="Center"
-                            Orientation="Horizontal" Grid.Row="11" Grid.ColumnSpan="8">
+                            Orientation="Horizontal" Grid.Row="11" Grid.ColumnSpan="10">
             <fa:ImageAwesome Icon="{Binding Status.Success, 
-                                                        Converter={StaticResource StatusToIconConverter}, UpdateSourceTrigger=PropertyChanged}" 
+                                                        Converter={StaticResource StatusToIconConverter},
+                                                        UpdateSourceTrigger=PropertyChanged}" 
                             Margin="0 0 14 0" MaxHeight="14" MaxWidth="14"
                             Foreground="{Binding Status.Success,
-                                                    Converter={StaticResource StatusToForegroundConverter}, UpdateSourceTrigger=PropertyChanged}"/>
-            <TextBlock Text="{Binding Status, Converter={StaticResource StatusToTextConverter}, UpdateSourceTrigger=PropertyChanged}" 
-                            FontSize="14" Foreground="Red"/>
+                                                    Converter={StaticResource StatusToForegroundConverter}, 
+                                                    UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Text="{Binding Status, Converter={StaticResource StatusToTextConverter}, 
+                                                                    UpdateSourceTrigger=PropertyChanged}" 
+                            FontSize="14" Foreground="{Binding Status.Success,
+                                                                            Converter={StaticResource StatusToForegroundConverter}, 
+                                                                            UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
         
         <!-- Save button -->
@@ -188,7 +206,8 @@
 
         <!-- Delete button -->
         <Button Visibility="{Binding Event.EID, Converter={StaticResource EidToVisibilityConverter}}"
-                Content="Delete"
+                Content="Delete" IsEnabled="{Binding EventModified, 
+                                                                Converter={StaticResource ReversedBooleanConverter}}"
                 Grid.Row="12" Grid.Column="4" Grid.ColumnSpan="2"
 				Command="{Binding DeleteEventCommand}"
 				Style="{DynamicResource MaterialDesignRaisedAccentButton}"/>
