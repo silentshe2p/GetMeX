@@ -126,6 +126,7 @@
     <Compile Include="Utilities\ColorIdToHexConverter.cs" />
     <Compile Include="Utilities\EidToVisibilityConverter.cs" />
     <Compile Include="Utilities\ExtensionMethods.cs" />
+    <Compile Include="Utilities\HeightToMarginConverter.cs" />
     <Compile Include="Utilities\Helper.cs" />
     <Compile Include="Utilities\Messages\FetchImagesMsg.cs" />
     <Compile Include="Utilities\Messages\NewQueryMsg.cs" />

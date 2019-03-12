@@ -20,6 +20,23 @@ namespace GetMeX.Views
         {
             var viewModel = DataContext as EventEditViewModel;
             viewModel.InitModel();
+            CloseDeleteDialog();
+        }
+
+        // Fire actual delete command then close dialog
+        private void DeleteConfirmed_Click(object sender, RoutedEventArgs e)
+        {
+            var viewModel = ((Button)sender).DataContext as EventEditViewModel;
+            if (viewModel.DeleteEventCommand.CanExecute(null))
+            {
+                viewModel.DeleteEventCommand.Execute(null);
+            }
+            CloseDeleteDialog();
+        }
+
+        private void CloseDeleteDialog()
+        {
+            MaterialDesignThemes.Wpf.DialogHost.CloseDialogCommand.Execute(null, null);
         }
 
         private void TextBox_CheckEventModified(object sender, KeyEventArgs e)
