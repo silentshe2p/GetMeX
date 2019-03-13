@@ -8,8 +8,8 @@ namespace GetMeX.ViewModels.Services
 	public class GetSongService
 	{
 		private string[] j1Param = { "player", "player_j1x", "player_j1a", "player_j1g" };
-		private const string J1OnAirSong = "https://j1fm.com/{0}/en/onair.php";
-		private const string J1OnAirCover = "https://j1fm.com/{0}/en/cover.php";
+		private static string J1OnAirSong = "https://j1fm.com/{0}/en/onair.php";
+		private static string J1OnAirCover = "https://j1fm.com/{0}/en/cover.php";
 		private static string cdjapanUri = "http://www.cdjapan.co.jp/product/";
 
 		private J1Channels Channel { get; set; }

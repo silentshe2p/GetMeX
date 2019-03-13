@@ -135,7 +135,7 @@
             <Button Name="WideView"  Content="Wide view"
                     VerticalAlignment="Center"
                     Grid.Row="12" Grid.Column="8" Grid.ColumnSpan="2"
-				    Command="{Binding}" 
+				    Command="{Binding WideViewCommand}" 
 				    Style="{DynamicResource MaterialDesignFlatButton}"/>
         </Grid>
     </DataTemplate>

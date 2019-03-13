@@ -18,9 +18,7 @@ namespace GetMeX.ViewModels.VMs
 {
     public class EventsViewModel : INotifyPropertyChanged, IViewModel
     {
-        const int viewableYearRange = 2;
-        const int viewableEventsNum = 20;
-
+        private int viewableEventsNum = 20;
         private GXEventService _dbs;
         private List<AccountDetail> _accounts;
 
@@ -51,8 +49,8 @@ namespace GetMeX.ViewModels.VMs
             }
         }
 
-        private ViewService editViewService { get; set; }
-        private ViewService wideViewService { get; set; }
+        private ViewService _editViewService;
+        private ViewService _wideViewService;
 
         public EventsViewModel(Window[] views)
         {
@@ -79,8 +77,8 @@ namespace GetMeX.ViewModels.VMs
             WideViewCommand = AsyncCommand.Create(WideView);
 
             // Views for edit and wide view functions
-            editViewService = new ViewService(views[0]);
-            wideViewService = new ViewService(views[1]);
+            _editViewService = new ViewService(views[0]);
+            _wideViewService = new ViewService(views[1]);
         }
 
         public IAsyncCommand FilterCommand { get; private set; }
@@ -125,7 +123,8 @@ namespace GetMeX.ViewModels.VMs
         public async Task DoWork() // Add new gmail account and sync with db
         {
             var service = new GoogleCalendarService();
-            var timeMax = DateTime.Now.AddYears(viewableYearRange);
+            var range = (int)AppDomain.CurrentDomain.GetData("EventViewableYearRange");
+            var timeMax = DateTime.Now.AddYears(range - 1);
             _accounts = _dbs.GetAvailableAccounts();
 
             try
@@ -177,18 +176,20 @@ namespace GetMeX.ViewModels.VMs
 
         public IAsyncCommand SwitchAccountCommand { get; private set; }
 
-        public Task SwitchAccount() // or "Add account" if not previously logged in
+        public async Task SwitchAccount() // or "Add account" if not previously logged in
         {
             if (LoggedIn)
             {
                 // Delete current saved oauth token
                 var tokenPath = AppDomain.CurrentDomain.GetData("GoogleCalendarTokenPath").ToString();
-                File.Delete(tokenPath);
+                if (Directory.Exists(tokenPath)) {
+                    Directory.Delete(tokenPath, true);
+                }
                 LoggedIn = false;
             }
             // Authenticate and retrieve events
+            await DoWork();
             RefreshEvents(viewableEventsNum);
-            return Task.CompletedTask;
         }
 
         public RelayCommand EditEventCommand { get; private set; }
@@ -197,7 +198,7 @@ namespace GetMeX.ViewModels.VMs
         {
             var eventToSend = (eventToEdit != null) ? (GXEvent)eventToEdit : null;
             Messenger.Base.Send(eventToSend);
-            editViewService.ShowDialog();
+            _editViewService.ShowDialog();
         }
 
         // Save received event (already validated by edit view model) to db
@@ -263,7 +264,7 @@ namespace GetMeX.ViewModels.VMs
                 SendModifyEventStatus(success: false, msg: ex.Message);
                 return;
             }
-            catch (Google.GoogleApiException ex)
+            catch (Google.GoogleApiException)
             {
                 SendModifyEventStatus(success: false, msg: "Unable to apply changes online. If error persists, consider modifying event locally");
                 return;
@@ -274,9 +275,12 @@ namespace GetMeX.ViewModels.VMs
 
         public IAsyncCommand WideViewCommand { get; private set; }
 
-        public async Task WideView()
+        public Task WideView()
         {
-
+            var vm = new EventWideViewViewModel();
+            _wideViewService.UpdateDataContext(vm);
+            _wideViewService.ShowDialog();
+            return Task.CompletedTask;
         }
 
         private void RefreshEvents(int limit)
@@ -304,8 +308,8 @@ namespace GetMeX.ViewModels.VMs
 
         public void CloseChildView(bool parentClosing)
         {
-            editViewService.CloseView(parentClosing);
-            wideViewService.CloseView(parentClosing);
+            _editViewService.CloseView(parentClosing);
+            _wideViewService.CloseView(parentClosing);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -145,6 +145,7 @@
     <Compile Include="Utilities\StatusToTextConverter.cs" />
     <Compile Include="VMs\EmptyViewModel.cs" />
     <Compile Include="VMs\EventEditViewModel.cs" />
+    <Compile Include="VMs\EventWideViewViewModel.cs" />
     <Compile Include="VMs\GoogleSearchViewModel.cs" />
     <Compile Include="VMs\IViewModel.cs" />
     <Compile Include="VMs\J1fmViewModel.cs" />

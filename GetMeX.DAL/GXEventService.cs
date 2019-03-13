@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using GetMeX.Models;
 
@@ -96,6 +97,12 @@ namespace GetMeX.DAL
 
             return (limit > 0) ? query.OrderBy(e => e.StartDate).Take(limit).ToList() 
                                         : query.OrderBy(e => e.StartDate).ToList();
+        }
+
+        public List<GXEvent> GetEvents(Expression<Func<GXEvent, bool>> predicate, int limit = 0)
+        {
+            var query = GetAllNoDuplicate(_db.GXEvents).Where(predicate);
+            return (limit > 0) ? query.Take(limit).ToList() : query.ToList();
         }
 
         private IQueryable<GXEvent> GetAllNoDuplicate(DbSet<GXEvent> context)

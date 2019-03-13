@@ -12,14 +12,13 @@ namespace GetMeX.ViewModels.Services
 {
     public class GoogleCalendarService
     {
-        const string ApplicationName = "GetMeX - Events";
+        private static string ApplicationName = "GetMeX - Events";
         private static string[] ViewScopes = { CalendarService.Scope.CalendarReadonly };
         private static string[] EditScopes = { CalendarService.Scope.Calendar,
                                                                 CalendarService.Scope.CalendarEvents,
                                                                 CalendarService.Scope.CalendarReadonly };
         private UserCredential credential;
         private CalendarService calService;
-        private bool editable;
 
         public GoogleCalendarService()
         {

@@ -13,9 +13,8 @@ namespace GetMeX.ViewModels.Services
 {
 	public class GetWeatherService
 	{
-		private string openweathermapApiKey;
-		private TempUnit unit;
-		private static string defaultApiKey = "eee0fe504018d3fe36d1640c8e54df85";
+		private string _apiKey;
+		private TempUnit _unit;
 		private static string openweathermapUrl = "http://api.openweathermap.org/data/2.5/weather?APPID=";
 		private static string statusIconUrl = "http://openweathermap.org/img/w/{0}.png";
 		private static string[] unitParam = { "metric", "imperial" };
@@ -25,19 +24,20 @@ namespace GetMeX.ViewModels.Services
 
         public GetWeatherService(string apiKey, string inputLocation, string unit = "Celsius")
 		{
-			openweathermapApiKey = ((apiKey == null || apiKey == "") ? defaultApiKey : apiKey);
+            var defaultApiKey = AppDomain.CurrentDomain.GetData("DefaultWeatherApiKey").ToString();
+            _apiKey = ((apiKey == null || apiKey == "") ? defaultApiKey : apiKey);
             _location = inputLocation;
 			switch(unit)
 			{
 				case "F":
-					this.unit = TempUnit.F;
+					this._unit = TempUnit.F;
 					break;
 				case "K":
-					this.unit = TempUnit.K;
+					this._unit = TempUnit.K;
 					break;
 				case "C":
 				default:
-					this.unit = TempUnit.C;
+					this._unit = TempUnit.C;
 					break;
 			}
 		}
@@ -57,8 +57,8 @@ namespace GetMeX.ViewModels.Services
             }
 
             var locationQuery = LocationToQuery(_location);
-			var unitQuery = (unit == TempUnit.K) ? "" : string.Format("&units={0}", unitParam[(int)unit]);
-			var query = openweathermapUrl + openweathermapApiKey + '&' + locationQuery + unitQuery;
+			var unitQuery = (_unit == TempUnit.K) ? "" : string.Format("&units={0}", unitParam[(int)_unit]);
+			var query = openweathermapUrl + _apiKey + '&' + locationQuery + unitQuery;
 
 			using (var client = new HttpClient())
 			{

@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using GetMeX.ViewModels.VMs;
 
 namespace GetMeX.ViewModels.Services
 {
@@ -15,7 +16,12 @@ namespace GetMeX.ViewModels.Services
             _view.Closing += HideView;
         }
 
-        public void ShowDialog()
+        internal void UpdateDataContext(IViewModel viewModel)
+        {
+            _view.DataContext = viewModel;
+        }
+
+        internal void ShowDialog()
         {
             if (_view != null)
             {
@@ -24,7 +30,7 @@ namespace GetMeX.ViewModels.Services
             }
         }
 
-        public void ShowView()
+        internal void ShowView()
         {
             if (_view != null)
             {
@@ -33,7 +39,7 @@ namespace GetMeX.ViewModels.Services
             }
         }
 
-        public void CloseView(bool parentClosing=false)
+        internal void CloseView(bool parentClosing=false)
         {
             if (_view != null)
             {

@@ -9,8 +9,8 @@ namespace GetMeX.ViewModels.Services
 {
     public class GoogleSuggestionService
     {
-        private const string suggestionEndpoint = "http://www.google.com/complete/search?output=toolbar&q={0}";
-        private const string langParam = "&hl={0}";
+        private static string suggestionEndpoint = "http://www.google.com/complete/search?output=toolbar&q={0}";
+        private static string langParam = "&hl={0}";
         private string queryUri { get; set; }
 
         public GoogleSuggestionService(string query, string lang)

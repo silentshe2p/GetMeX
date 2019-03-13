@@ -9,9 +9,10 @@ namespace GetMeX.ViewModels.Services
 {
     public class GetGoogleService
     {
-        private const string searchEndpoint = "https://www.google.com/search?q={0}&start={1}";
-        private const string langParam = "&lr=lang_{0}";
+        private static string searchEndpoint = "https://www.google.com/search?q={0}&start={1}";
+        private static string langParam = "&lr=lang_{0}";
         private string queryUri { get; set; }
+
         public GetGoogleService(string query, string lang, int start=0)
         {
             var lp = (lang == "auto") ? "" : string.Format(langParam, lang);
