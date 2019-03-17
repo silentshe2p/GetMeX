@@ -1,0 +1,115 @@
+﻿<Window x:Class="GetMeX.Views.EventTreeViewWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:ult="clr-namespace:GetMeX.ViewModels.Utilities;assembly=GetMeX.ViewModels"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:wpf="http://materialdesigninxaml.net/winfx/xaml/themes"
+		mc:Ignorable="d" Height="480" Width="600"
+		Title="Event Tree"
+		Background="{DynamicResource MaterialDesignPaper}"
+		TextElement.Foreground="{DynamicResource MaterialDesignBody}">
+
+    <Window.Resources>
+        <ult:PeriodConverter x:Key="PeriodConverter"/>
+        <ult:ColorIdToHexConverter x:Key="ColorIdToHexConverter"/>
+        <ult:Subtractor x:Key="Subtractor"/>
+
+        <DataTemplate x:Key="summaryExpander">
+            <TextBlock Text="{Binding}" FontSize="20"
+                       Style="{DynamicResource MaterialDesignHeadlineTextBlock}"/>
+        </DataTemplate>
+
+        <HierarchicalDataTemplate x:Key="branchTemplate" 
+                        ItemsSource="{Binding Events, UpdateSourceTrigger=PropertyChanged}">
+            <Grid>
+                <wpf:Card Background="{Binding Period, Converter={StaticResource PeriodConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <fa:ImageAwesome Icon="Calendar" MaxHeight="20" MaxWidth="20" Margin="10 5 0 3"/>
+                        <TextBlock Text="{Binding Period}" Margin="10 5 30 3"
+                                        FontSize="{Binding Period, Converter={StaticResource PeriodConverter}}" 
+                                        Style="{DynamicResource MaterialDesignHeadlineTextBlock}"/>
+                    </StackPanel>
+                </wpf:Card>
+                <wpf:Badged Content="{Binding Events.Length}"
+                                        Visibility="{Binding Period, Converter={StaticResource PeriodConverter}}"
+                                        FontSize="12" HorizontalAlignment="Right" Margin="0 1 3 0"/>
+            </Grid>
+
+        </HierarchicalDataTemplate>
+
+        <DataTemplate x:Key="leafTemplate">
+            <StackPanel Orientation="Vertical" 
+                        MaxWidth="{Binding Path=Width, 
+                                                        Converter={StaticResource Subtractor}, 
+                                                        ConverterParameter=89,
+                                                        RelativeSource={RelativeSource AncestorType={x:Type Window}}}">
+                <wpf:Card Background="Beige">
+                    <Expander Header="{Binding Summary}" HeaderTemplate="{StaticResource summaryExpander}">
+                        <DockPanel>
+                            <StackPanel MinWidth="150" MinHeight="150" DockPanel.Dock="Left"
+                                           Background="{Binding ColorId, Converter={StaticResource ColorIdToHexConverter}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:ImageAwesome Icon="CalendarOutline" Margin="5 5 0 0"
+                                           MaxHeight="20" MaxWidth="20"/>
+                                    <TextBlock Text="{Binding StartDate, StringFormat={}{0:yyyy}}"
+                                           Margin="5 5 0 0"
+                                           Style="{DynamicResource MaterialDesignHeadlineTextBlock}"/>
+                                </StackPanel>
+
+                                <TextBlock Text="{Binding StartDate, StringFormat={}{0:MM/dd HH:mm}}"
+                                           Margin="15 5 0 0" 
+                                           Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <fa:ImageAwesome Icon="CalendarCheckOutline" Margin="5 5 0 0"
+                                           MaxHeight="20" MaxWidth="20"/>
+                                    <TextBlock Text="{Binding EndDate, StringFormat={}{0:yyyy}}"
+                                           Margin="5 5 0 0"
+                                           Style="{DynamicResource MaterialDesignHeadlineTextBlock}"/>
+                                </StackPanel>
+                                <TextBlock Text="{Binding EndDate, StringFormat={}{0:MM/dd HH:mm}}" 
+                                           Margin="15 5 0 0" 
+                                           Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+
+                                <Button MaxHeight="20" MaxWidth="20" Background="Transparent"
+                                           HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                           Click="EditEvent_OnClick">
+                                    <fa:ImageAwesome Icon="Edit" />
+                                </Button>
+                            </StackPanel>
+
+                            <StackPanel MinWidth="150" MinHeight="150"
+                                        DockPanel.Dock="Right">
+                                <StackPanel Orientation="Horizontal" 
+                                        Visibility="{Binding Location, Converter={StaticResource NullToVisibilityConverter}}">
+                                    <fa:ImageAwesome Icon="LocationArrow" Margin="10"
+                                        MaxHeight="20" MaxWidth="20"/>
+                                    <TextBlock Text="{Binding Location}" Margin="10"
+                                        Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+                                </StackPanel>
+                                <TextBlock Text="{Binding Description}" Margin="5"
+                                        TextWrapping="Wrap"
+                                        Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+                            </StackPanel>
+                        </DockPanel>
+                    </Expander>
+                </wpf:Card>
+            </StackPanel>
+
+        </DataTemplate>
+
+        <ult:TreeViewSelector x:Key="TreeViewSelector" 
+                              BranchTemplate="{StaticResource branchTemplate}" 
+                              LeafTemplate="{StaticResource leafTemplate}"/>
+    </Window.Resources>
+
+    <Grid>
+        <TreeView Name="EventTree"
+                        ItemsSource="{Binding Events, UpdateSourceTrigger=PropertyChanged}" 
+                        TreeViewItem.Expanded="LoadEvent_OnExpanded" 
+                        ItemTemplateSelector="{StaticResource TreeViewSelector}">
+        </TreeView>
+    </Grid>
+</Window>

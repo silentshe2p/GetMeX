@@ -98,8 +98,8 @@
     <Compile Include="EventEditWindow.xaml.cs">
       <DependentUpon>EventEditWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="EventWideViewWindow.xaml.cs">
-      <DependentUpon>EventWideViewWindow.xaml</DependentUpon>
+    <Compile Include="EventTreeViewWindow.xaml.cs">
+      <DependentUpon>EventTreeViewWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="GetMeXWindow.xaml.cs">
       <DependentUpon>GetMeXWindow.xaml</DependentUpon>
@@ -127,7 +127,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="EventWideViewWindow.xaml">
+    <Page Include="EventTreeViewWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

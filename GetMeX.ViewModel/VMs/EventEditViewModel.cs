@@ -152,7 +152,7 @@ namespace GetMeX.ViewModels.VMs
                 Event = new GXEvent(ev);
                 _originalEvent = new GXEvent(Event);
                 ActionName = "Edit event";
-                if (ev.Account.Gmail.Contains("@gmail.com"))
+                if (ev.Account != null && ev.Account.Gmail.Contains("@gmail.com"))
                 {
                     Account = ev.Account.Gmail;
                     SaveChangeOnline = true;

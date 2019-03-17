@@ -13,12 +13,13 @@ using GetMeX.DAL;
 using GetMeX.ViewModels.Commands;
 using GetMeX.ViewModels.Services;
 using GetMeX.ViewModels.Utilities;
+using GetMeX.ViewModels.Utilities.Messages;
 
 namespace GetMeX.ViewModels.VMs
 {
     public class EventsViewModel : INotifyPropertyChanged, IViewModel
     {
-        private int viewableEventsNum = 20;
+        private int viewableEventsNum = 50;
         private GXEventService _dbs;
         private List<AccountDetail> _accounts;
 
@@ -50,7 +51,7 @@ namespace GetMeX.ViewModels.VMs
         }
 
         private ViewService _editViewService;
-        private ViewService _wideViewService;
+        private ViewService _treeViewService;
 
         public EventsViewModel(Window[] views)
         {
@@ -74,11 +75,11 @@ namespace GetMeX.ViewModels.VMs
             DoWorkCommand = AsyncCommand.Create(DoWork);
             FilterCommand = AsyncCommand.Create(Filter);
             SwitchAccountCommand = AsyncCommand.Create(SwitchAccount);
-            WideViewCommand = AsyncCommand.Create(WideView);
+            TreeViewCommand = AsyncCommand.Create(TreeView);
 
             // Views for edit and wide view functions
             _editViewService = new ViewService(views[0]);
-            _wideViewService = new ViewService(views[1]);
+            _treeViewService = new ViewService(views[1]);
         }
 
         public IAsyncCommand FilterCommand { get; private set; }
@@ -124,7 +125,7 @@ namespace GetMeX.ViewModels.VMs
         {
             var service = new GoogleCalendarService();
             var range = (int)AppDomain.CurrentDomain.GetData("EventViewableYearRange");
-            var timeMax = DateTime.Now.AddYears(range - 1);
+            var timeMax = new DateTime(DateTime.Today.Year + range - 1, 12, 31, 23, 59, 59);
             _accounts = _dbs.GetAvailableAccounts();
 
             try
@@ -271,15 +272,22 @@ namespace GetMeX.ViewModels.VMs
             }
             SendModifyEventStatus(success: true, deleted: m.Action == EventModifyAction.Delete);
             RefreshEvents(viewableEventsNum);
+
+            // Update tree view if opened
+            Messenger.Base.Send(new UpdateTreeViewMsg
+            {
+                ModifiedEvent = m.Event,
+                Action = m.Action
+            });
         }
 
-        public IAsyncCommand WideViewCommand { get; private set; }
+        public IAsyncCommand TreeViewCommand { get; private set; }
 
-        public Task WideView()
+        public Task TreeView()
         {
-            var vm = new EventWideViewViewModel();
-            _wideViewService.UpdateDataContext(vm);
-            _wideViewService.ShowDialog();
+            var vm = new EventTreeViewModel(EditEventCommand);
+            _treeViewService.UpdateDataContext(vm);
+            _treeViewService.ShowDialog();
             return Task.CompletedTask;
         }
 
@@ -309,7 +317,7 @@ namespace GetMeX.ViewModels.VMs
         public void CloseChildView(bool parentClosing)
         {
             _editViewService.CloseView(parentClosing);
-            _wideViewService.CloseView(parentClosing);
+            _treeViewService.CloseView(parentClosing);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -23,8 +23,8 @@ namespace GetMeX.Views
         // Event function vms
         private static EventEditViewModel _eeVM = new EventEditViewModel();
         private static EventEditWindow _eeView = new EventEditWindow(_eeVM);
-        private static EventWideViewWindow _ewView = new EventWideViewWindow();
-        private static Window[] eventWindows = new Window[] { _eeView, _ewView };
+        private static EventTreeViewWindow _etView = new EventTreeViewWindow();
+        private static Window[] eventWindows = new Window[] { _eeView, _etView };
         private static EventsViewModel _eVM = new EventsViewModel(eventWindows);
 
         public GetMeXWindow(IViewModel viewModel)

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using GetMeX.ViewModels.VMs;
 
 namespace GetMeX.ViewModels.Services
@@ -48,7 +49,7 @@ namespace GetMeX.ViewModels.Services
             }
         }
 
-        private void HideView(object sender, System.ComponentModel.CancelEventArgs e)
+        private void HideView(object sender, CancelEventArgs e)
         {
             // Hide the view instead of closing to be able to re-open later unless main program (parent) is closing
             if (!_parentClosing)

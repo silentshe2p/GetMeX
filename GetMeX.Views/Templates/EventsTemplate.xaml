@@ -106,7 +106,7 @@
                 </ListBox.ItemsPanel>
             </ListBox>
 
-            <!--Functions: Create event, add/switch account, wide view-->
+            <!--Functions: Create event, add/switch account, tree view-->
             <Button Name="CreateEvent"  Content="Create..."
                     VerticalAlignment="Center"
                     Grid.Row="12" Grid.Column="4" Grid.ColumnSpan="2"
@@ -132,10 +132,10 @@
                 </TextBlock>
             </Button>
 
-            <Button Name="WideView"  Content="Wide view"
+            <Button Name="TreeView"  Content="Tree view"
                     VerticalAlignment="Center"
                     Grid.Row="12" Grid.Column="8" Grid.ColumnSpan="2"
-				    Command="{Binding WideViewCommand}" 
+				    Command="{Binding TreeViewCommand}" 
 				    Style="{DynamicResource MaterialDesignFlatButton}"/>
         </Grid>
     </DataTemplate>
