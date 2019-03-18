@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using GetMeX.Models;
@@ -18,6 +19,30 @@ namespace GetMeX.Templates
                 {
                     viewModel.EditEventCommand.Execute(selected);
                 }
+            }
+        }
+
+        private void SlideEvent_OnMouseHover(object sender, MouseEventArgs e)
+        {
+            var mousePos = e.GetPosition(Application.Current.MainWindow);
+            var center = Application.Current.MainWindow.ActualWidth / 2;
+            var diff = Math.Abs(mousePos.X - center);
+
+            if (diff > (center * 0.7))
+            {
+                var eventBox = sender as ListBox;
+                Thickness margin = eventBox.Margin;
+
+                if (mousePos.X > center)
+                {
+                    margin.Left -= 0.001 * diff;
+                }
+                else
+                {
+                    margin.Left += 0.001 * diff;
+                }
+
+                eventBox.Margin = margin;
             }
         }
     }

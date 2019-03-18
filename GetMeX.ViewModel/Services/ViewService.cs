@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using System.Windows.Forms.Integration;
 using GetMeX.ViewModels.VMs;
 
 namespace GetMeX.ViewModels.Services
@@ -36,6 +37,7 @@ namespace GetMeX.ViewModels.Services
             if (_view != null)
             {
                 SetOwner();
+                ElementHost.EnableModelessKeyboardInterop(_view);
                 _view.Show();
             }
         }

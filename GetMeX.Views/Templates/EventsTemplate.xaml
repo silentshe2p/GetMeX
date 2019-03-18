@@ -8,28 +8,37 @@
     x:Class="GetMeX.Templates.EventTemplate">
 
     <ult:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
-    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    <ult:ColorIdToHexConverter x:Key="ColorIdToHexConverter"/>
 
     <!-- Event detail template -->
     <DataTemplate x:Key="eventDetailTemplate">
-        <StackPanel Margin="30 10 30 0" x:Name="EventDetail">
-            <wpf:Card Content="{Binding Summary}"
-                      FontSize="20" FontFamily="Georgia"
-                      Background="BlanchedAlmond" Foreground="ForestGreen"/>
-            <TextBlock/>
-            <TextBlock Text="{Binding StartDate, StringFormat=Fr: {0:MM/dd/yyyy HH:mm:ss}}"
-                       FontSize="18"/>
-            <TextBlock/>
-            <TextBlock Text="{Binding EndDate, StringFormat=To: {0:MM/dd/yyyy HH:mm:ss}}"
-                       FontSize="14"/>
-            <TextBlock/>
-            <TextBlock  Visibility="{Binding Location, Converter={StaticResource NullToVisibilityConverter}}" 
+        <wpf:Card x:Name="EventDetail" MinHeight="250" MaxWidth="350" Background="WhiteSmoke">
+            <StackPanel>
+                <TextBlock Text="{Binding Summary}" Margin="0 20 0 0" TextAlignment="Center"
+                       Width="{Binding Path=ActualWidth,
+                                                RelativeSource={RelativeSource AncestorType={x:Type wpf:Card}}}"
+                       Background="{Binding ColorId, Converter={StaticResource ColorIdToHexConverter}}"
+                       Style="{DynamicResource MaterialDesignHeadlineTextBlock}"/>
+                <TextBlock/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding StartDate, StringFormat={}{0:MM/dd/yyyy HH:mm}}"
+                       FontSize="18" Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+                    <TextBlock/>
+                    <TextBlock Text="  ~  " Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+                    <TextBlock Text="{Binding EndDate, StringFormat={}{0:MM/dd/yyyy HH:mm}}"
+                       FontSize="18" Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+                    <TextBlock/>
+                </StackPanel>
+                <TextBlock/>
+                <TextBlock  Visibility="{Binding Location, Converter={StaticResource NullToVisibilityConverter}}" 
                        Text="{Binding Location, StringFormat=@: {0}}"
-                       FontSize="14"/>
-            <TextBlock Text="{Binding Description}"/>
-            <TextBlock/>
-            <TextBlock/>
-        </StackPanel>
+                       Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+                <TextBlock Text="{Binding Description}" TextWrapping="Wrap"
+                       MaxWidth="{Binding Path=ActualWidth,
+                                                RelativeSource={RelativeSource AncestorType={x:Type wpf:Card}}}"
+                       Style="{DynamicResource MaterialDesignSubheadingTextBlock}"/>
+            </StackPanel>
+        </wpf:Card>
     </DataTemplate>
 
     <DataTemplate DataType="{x:Type vms:EventsViewModel}">
@@ -62,37 +71,22 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <!--Exp bar-->
-            <TextBox Text="EXP" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"/>
-
-            <!--Search bar-->
-            <Border BorderBrush="MidnightBlue" BorderThickness="2" 
-                        Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="4"
-                        CornerRadius="5">
-                <StackPanel Orientation="Horizontal">
-                    <Button Command="{Binding FilterCommand}"
-                            BorderThickness="0" Background="Transparent" Margin="2 2 15 2">
-                        <fa:ImageAwesome Icon="Search"/>
-                    </Button>
-                    <TextBox Text="{Binding FilterQuery}" BorderThickness="0" VerticalAlignment="Center" FontSize="16"/>
-                </StackPanel>
-            </Border>
-
             <!--Events display-->
-            <ListBox Grid.Row="2" Grid.RowSpan="10" Grid.ColumnSpan="10"
+            <ListBox Grid.Row="0" Grid.RowSpan="12" Grid.ColumnSpan="10"
                     VerticalAlignment="Top" MouseDoubleClick="DoubleClick_EditEvent"
                     BorderThickness="0" Background="Transparent" 
                     ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                    ItemsSource="{Binding Events}"
+                    ItemsSource="{Binding Events}" MouseMove="SlideEvent_OnMouseHover"
 				    ItemTemplate="{StaticResource eventDetailTemplate}">
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Margin" Value="30 0 30 0"/>
                         <Style.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Grid.ZIndex" Value="1"/>
                                 <Setter Property="RenderTransform">
                                     <Setter.Value>
-                                        <ScaleTransform ScaleX="1.1" ScaleY="1.1"/>
+                                        <ScaleTransform ScaleX="1.1" ScaleY="1.1" CenterY="250"/>
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
@@ -106,7 +100,19 @@
                 </ListBox.ItemsPanel>
             </ListBox>
 
-            <!--Functions: Create event, add/switch account, tree view-->
+            <!--Functions: Search, create event, add/switch account, tree view-->
+            <Border BorderBrush="MidnightBlue" BorderThickness="2" 
+                        Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="4"
+                        CornerRadius="5" Margin="10 0 0 0">
+                <StackPanel Orientation="Horizontal">
+                    <Button Command="{Binding FilterCommand}"
+                            BorderThickness="0" Background="Transparent" Margin="2 2 15 2">
+                        <fa:ImageAwesome Icon="Search"/>
+                    </Button>
+                    <TextBox Text="{Binding FilterQuery}" BorderThickness="0" VerticalAlignment="Center" FontSize="16"/>
+                </StackPanel>
+            </Border>
+
             <Button Name="CreateEvent"  Content="Create..."
                     VerticalAlignment="Center"
                     Grid.Row="12" Grid.Column="4" Grid.ColumnSpan="2"
