@@ -126,6 +126,7 @@
     <Compile Include="Services\IViewService.cs" />
     <Compile Include="Services\ViewService.cs" />
     <Compile Include="Utilities\ColorIdToHexConverter.cs" />
+    <Compile Include="Utilities\DateToColorConverter.cs" />
     <Compile Include="Utilities\EidToVisibilityConverter.cs" />
     <Compile Include="Utilities\ExtensionMethods.cs" />
     <Compile Include="Utilities\HeightToMarginConverter.cs" />
@@ -143,7 +144,6 @@
     <Compile Include="Utilities\CountConverter.cs" />
     <Compile Include="Utilities\PeriodConverter.cs" />
     <Compile Include="Utilities\ReversedBooleanConverter.cs" />
-    <Compile Include="Utilities\SaveChangeOnlineVisibilityConverter.cs" />
     <Compile Include="Utilities\StatusToForegroundConverter.cs" />
     <Compile Include="Utilities\StatusToIconConverter.cs" />
     <Compile Include="Utilities\StatusToTextConverter.cs" />

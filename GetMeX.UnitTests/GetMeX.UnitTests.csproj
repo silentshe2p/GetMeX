@@ -7,8 +7,8 @@
     <ProjectGuid>{29E020D8-FE53-4F94-9AE6-19DA4E1CE0CB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GetMeX.ViewModelTests</RootNamespace>
-    <AssemblyName>GetMeX.ViewModelTests</AssemblyName>
+    <RootNamespace>GetMeX.UnitTests</RootNamespace>
+    <AssemblyName>GetMeX.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -75,6 +75,12 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\x64\Debug\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Apis.Calendar.v3, Version=1.38.0.1482, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab" />
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\MSTest.TestFramework.1.3.2\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
     </Reference>
@@ -82,6 +88,8 @@
       <HintPath>..\packages\MSTest.TestFramework.1.3.2\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -92,17 +100,27 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="DAL\EventTestContext.cs" />
+    <Compile Include="DAL\EventsDbServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\GetGoogleServiceTests.cs" />
     <Compile Include="Services\GetSongTests.cs" />
     <Compile Include="Services\GetWeatherServiceTests.cs" />
     <Compile Include="Services\GoogleSuggestionServiceTests.cs" />
     <Compile Include="Services\ImageRetrieverServiceTests.cs" />
+    <Compile Include="Services\GoogleCalendarServiceTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GetMeX.DAL\GetMeX.DAL.csproj">
+      <Project>{32a9e5fe-e92d-4846-8903-56110e5828cb}</Project>
+      <Name>GetMeX.DAL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GetMeX.Models\GetMeX.Models.csproj">
       <Project>{8bed7141-0749-4e6a-90a5-129fec2f1f86}</Project>
       <Name>GetMeX.Models</Name>
@@ -111,6 +129,9 @@
       <Project>{1E9F50B0-02D1-4434-9F69-1B7B6612933E}</Project>
       <Name>GetMeX.ViewModels</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

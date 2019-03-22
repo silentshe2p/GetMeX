@@ -18,7 +18,6 @@
         <ult:StatusToIconConverter x:Key="StatusToIconConverter"/>
         <ult:StatusToForegroundConverter x:Key="StatusToForegroundConverter"/>
         <ult:StatusToTextConverter x:Key="StatusToTextConverter"/>
-        <ult:SaveChangeOnlineVisibilityConverter x:Key="SaveChangeOnlineVisibilityConverter"/>
         <ult:ReversedBooleanConverter x:Key="ReversedBooleanConverter"/>
         <ult:HeightToMarginConverter x:Key="HeightToMarginConverter"/>
     </Window.Resources>
@@ -172,7 +171,7 @@
         </ComboBox>
 
         <!--Save online checkbox-->
-        <CheckBox Visibility="{Binding Event, Converter={StaticResource SaveChangeOnlineVisibilityConverter}}"
+        <CheckBox Visibility="{Binding LoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"
                             Grid.Row="10" Grid.Column="5" Grid.ColumnSpan="4"
                             VerticalAlignment="Center" IsChecked="{Binding SaveChangeOnline}">
             <TextBlock Text="Apply changes to Calendar" 

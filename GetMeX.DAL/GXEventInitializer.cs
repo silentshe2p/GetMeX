@@ -4,9 +4,9 @@ using GetMeX.Models;
 
 namespace GetMeX.DAL
 {
-    class GXEventInitializer : IDatabaseInitializer<GXEventsEntities>
+    class GXEventInitializer : CreateDatabaseIfNotExists<GXEventsEntities>
     {
-        public void InitializeDatabase(GXEventsEntities context)
+        protected override void Seed(GXEventsEntities context)
         {
             if (context.Accounts.Find(1) == null)
             {
@@ -17,7 +17,7 @@ namespace GetMeX.DAL
                     Finished = 0,
                     Missed = 0
                 };
-                
+
                 context.Accounts.Add(account);
                 context.SaveChanges();
             }

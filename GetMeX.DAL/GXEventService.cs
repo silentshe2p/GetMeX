@@ -18,6 +18,11 @@ namespace GetMeX.DAL
             _db = new GXEventsEntities();
         }
 
+        public GXEventService(GXEventsEntities db)
+        {
+            _db = db;
+        }
+
         ~GXEventService()
         {
             if (_db != null)

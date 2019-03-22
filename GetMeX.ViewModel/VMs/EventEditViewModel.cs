@@ -62,6 +62,17 @@ namespace GetMeX.ViewModels.VMs
             }
         }
 
+        private bool _loggedIn;
+        public bool LoggedIn
+        {
+            get { return _loggedIn; }
+            set
+            {
+                _loggedIn = value;
+                OnPropertyChanged();
+            }
+        }
+
         private bool _saveChangeOnline;
         public bool SaveChangeOnline
         {
@@ -180,6 +191,7 @@ namespace GetMeX.ViewModels.VMs
                 ColorId = 1
             };
             _originalEvent = new GXEvent(Event);
+            LoggedIn = _dbs.GetAvailableAccounts().Count > 1;
             SaveChangeOnline = false;
             ActionName = "Create event";
             Account = "Local";

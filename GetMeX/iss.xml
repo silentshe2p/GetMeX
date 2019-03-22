@@ -1,0 +1,12 @@
+<iss>
+  <instagram.com>
+    <desc>"text":</desc>
+    <link>"display_url":</link>
+    <order>default</order>
+  </instagram.com>
+  <pinterest.>
+    <desc>"description_html": </desc>
+    <link>"orig": {"url": </link>
+    <order>reverse</order>
+  </pinterest.>
+</iss>

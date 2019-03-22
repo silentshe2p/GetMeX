@@ -1,8 +1,6 @@
 SET NOCOUNT ON
 GO
 
-USE master
-GO
 IF EXISTS (SELECT * FROM sys.sysdatabases WHERE name='GXEvents') 
 	DROP DATABASE GXEvents
 GO
@@ -21,7 +19,7 @@ GO
 
 DROP TABLE IF EXISTS  dbo.Account
 DROP TABLE IF EXISTS  dbo.GXEvent
-Go
+GO
 
 CREATE TABLE Account (
 	AID			INT IDENTITY(1, 1)	NOT NULL PRIMARY KEY CLUSTERED,
@@ -31,6 +29,7 @@ CREATE TABLE Account (
 	Missed		INT							NOT NULL DEFAULT 0 CHECK (Missed >= 0)
 )
 GO
+
 CREATE INDEX Gmail ON dbo.Account(Gmail)
 GO
 
@@ -48,5 +47,6 @@ CREATE TABLE GXEvent (
 	ColorId				TINYINT					NOT NULL CHECK (ColorId > 0), CHECK (ColorId < 12)
 )
 GO
+
 CREATE INDEX GID ON dbo.GXEvent(GID)
 GO

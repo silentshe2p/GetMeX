@@ -12,6 +12,7 @@ namespace GetMeX.ViewModels.Services
 {
     public class GoogleCalendarService
     {
+        private TimeSpan _authTimeout = TimeSpan.FromMinutes(5);
         private static string ApplicationName = "GetMeX - Events";
         private static string[] ViewScopes = { CalendarService.Scope.CalendarReadonly };
         private static string[] EditScopes = { CalendarService.Scope.Calendar,
@@ -39,12 +40,25 @@ namespace GetMeX.ViewModels.Services
             using (var stream = new FileStream(credentialPath, FileMode.Open, FileAccess.Read))
             {
                 // Stores the user's access and refresh tokens after the authorization flow completes
-                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.Load(stream).Secrets,
-                    scopes,
-                    "user",
-                    CancellationToken.None,
-                    new FileDataStore(tokenPath, true));
+                var authTask = GoogleWebAuthorizationBroker.AuthorizeAsync(
+                                            GoogleClientSecrets.Load(stream).Secrets,
+                                            scopes,
+                                            "user",
+                                            CancellationToken.None,
+                                            new FileDataStore(tokenPath, true));
+                using (var cancelTokenSource = new CancellationTokenSource())
+                {
+                    var completed = await Task.WhenAny(authTask, Task.Delay(_authTimeout, cancelTokenSource.Token));
+                    if (completed != authTask)
+                    {
+                        throw new TimeoutException("Google Calendar authorization timed out");
+                    }
+                    else
+                    {
+                        cancelTokenSource.Cancel();
+                        credential = await authTask;
+                    }
+                }
             }
 
             // Google Calendar Api service

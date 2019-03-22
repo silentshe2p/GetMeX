@@ -21,7 +21,6 @@ namespace GetMeX.ViewModels.VMs
     {
         private int viewableEventsNum = 50;
         private GXEventService _dbs;
-        private List<AccountDetail> _accounts;
 
         public bool LoggedIn { get; set; }
 
@@ -56,11 +55,6 @@ namespace GetMeX.ViewModels.VMs
         public EventsViewModel(Window[] views)
         {
             _dbs = new GXEventService();
-            // Summary of account avail in db
-            _accounts = _dbs.GetAvailableAccounts();
-            // User logged in if there is another account beside default _local account
-            LoggedIn = _accounts.Count > 1;
-
             _cachedEvents = null;
             _lastFilterQuery = "";
             FilterQuery = "";
@@ -126,7 +120,7 @@ namespace GetMeX.ViewModels.VMs
             var service = new GoogleCalendarService();
             var range = (int)AppDomain.CurrentDomain.GetData("EventViewableYearRange");
             var timeMax = new DateTime(DateTime.Today.Year + range - 1, 12, 31, 23, 59, 59);
-            _accounts = _dbs.GetAvailableAccounts();
+            var accounts = _dbs.GetAvailableAccounts();
 
             try
             {
@@ -134,7 +128,7 @@ namespace GetMeX.ViewModels.VMs
                 if (events != null && !events.Items.IsNullOrEmpty())
                 {
                     var email = events.Items[0].Creator.Email;
-                    var foundAcc = _accounts.Find(a => a.Email == email);
+                    var foundAcc = accounts.Find(a => a.Email == email);
                     List<GXEvent> newEvents = null;
                     int targetAccountId = 0;
 
@@ -148,7 +142,7 @@ namespace GetMeX.ViewModels.VMs
                     // New email
                     else
                     {
-                        targetAccountId = _accounts.Max(a => a.AccId) + 1;
+                        targetAccountId = accounts.Max(a => a.AccId) + 1;
                         await _dbs.AddAccount(email);
                         newEvents = events.Items.ToGXEvents(targetAccountId);
                     }
@@ -225,8 +219,8 @@ namespace GetMeX.ViewModels.VMs
                         // Event was successfully persisted on Google Calendar, update account and id
                         if (!googleCalendarEventId.IsNullOrEmpty())
                         {
-                            _accounts = _dbs.GetAvailableAccounts();
-                            var lastSyncAccount = _accounts.Where(a => a.AccId > 1)
+                            var accounts = _dbs.GetAvailableAccounts();
+                            var lastSyncAccount = accounts.Where(a => a.AccId > 1)
                                                                                 .OrderByDescending(a => a.LastSync)
                                                                                 .FirstOrDefault();
                             if (lastSyncAccount == null)
@@ -296,11 +290,14 @@ namespace GetMeX.ViewModels.VMs
             try
             {
                 Events = _dbs.GetEvents(limit).ToObservableCollection();
-                LoggedIn = true;
             }
             catch (DataException)
             {
                 throw new DataException("Failed to retrieve events from database. Verify the connection and try again");
+            }
+            finally
+            {
+                UpdateLoggedIn();
             }
         }
 
@@ -312,6 +309,12 @@ namespace GetMeX.ViewModels.VMs
                 Deleted = deleted,
                 Error = msg
             });
+        }
+
+        private void UpdateLoggedIn()
+        {
+            var account = _dbs.GetAvailableAccounts();
+            LoggedIn = account.Count > 1;
         }
 
         public void CloseChildView(bool parentClosing)
